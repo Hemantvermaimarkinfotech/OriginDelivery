@@ -1,6 +1,6 @@
 // src/navigation/MainStack.js
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import React,{useContext,useState}from 'react';
+import { View, Text, Image, TouchableOpacity, SafeAreaView,Alert} from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -9,7 +9,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { useNavigation } from '@react-navigation/native';
-
+import { AuthContext } from '../components/AuthProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MainHeader from '../components/MainHeader';
 
 import SplashScreen from '../screens/Splash';
@@ -26,11 +27,14 @@ import ImagePaths from '../utils/ImagePaths';
 import mStyle from '../../AppStyles';
 import MapRouteScreen from '../screens/MapRoute';
 import TitleHeader from '../components/TitleHeader';
+import EditProfile from '../screens/EditProfile';
 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+
+
 
 
 const HomeStack = () => (
@@ -59,6 +63,7 @@ const TrackingStack = () => (
 const SettingsStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }} />
+    {/* <Stack.Screen name="UpdateProfile" component={EditProfile} options={{ headerShown: false }} /> */}
     {/* Add more screens for Setting subpages if needed */}
   </Stack.Navigator>
 );
@@ -188,6 +193,30 @@ const BottomTabsNavigator = ({ navigation }) => (
 
 
 const CustomDrawerContent = ({ navigation }) => {
+  const { setUserToken } = useContext(AuthContext);
+
+  const logout = async () => {
+    Alert.alert(
+      'Confirm Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            setUserToken(null);
+            await AsyncStorage.removeItem('userData');
+            navigation.replace('GetStarted'); // Navigate to your login or get started screen
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   return (
     <>
     <SafeAreaView style={{backgroundColor: colors.white}} />
@@ -221,7 +250,7 @@ const CustomDrawerContent = ({ navigation }) => {
         <Text style={[mStyle.drawerText]}>Payout</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={mStyle.drawerButton} onPress={() => {}}>
+      <TouchableOpacity style={mStyle.drawerButton} onPress={() => logout()}>
         <View style={mStyle.drawerIconView}><Image source={ImagePaths.logoutIcon} style={mStyle.drawerIcon} /></View>
         <Text style={[mStyle.drawerText]}>Logout</Text>
       </TouchableOpacity>
@@ -241,8 +270,6 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="DrawerBottomTabs" component={BottomTabsNavigator} options={{ headerShown: false }}/>
       {/* Add more screens for Drawer if needed */}
 
-      {/* <Drawer.Screen  name="Homee" component={HomeScreen} options={{ headerShown: false }} />
-      <Drawer.Screen  name="Homeee" component={HomeScreen} options={{ headerShown: false }} /> */}
   </Drawer.Navigator>
 );
 
@@ -251,6 +278,8 @@ const DrawerNavigator = () => (
 
 
 const MainStack = () => {
+ 
+  
 
   const navigation = useNavigation();
 
@@ -269,6 +298,16 @@ const MainStack = () => {
           },
           header: () => <TitleHeader title="Profile" navigation={navigation} />, 
         }}/>
+         <Stack.Screen name="EditProfile" component={EditProfile} options={{
+          title: 'EditProfile',
+          headerStyle: {
+            backgroundColor: '#30B0C9', // Change the background color
+          },
+          headerTitleStyle: {
+            color: '#fff', // Change the text color
+          },
+          header: () => <TitleHeader title="EditProfile" navigation={navigation} />, 
+        }} />
 
       <Stack.Screen name="MapRoute" component={MapRouteScreen} 
         options={{

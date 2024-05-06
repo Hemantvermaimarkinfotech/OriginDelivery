@@ -41,8 +41,7 @@ const PayoutScreen = () => {
     setItems(monthsArray);
   }, []);
 
-  console.log(items);
-  console.log(months);
+ 
 
 
   const payoutData = [

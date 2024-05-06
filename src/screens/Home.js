@@ -1,110 +1,114 @@
 // src/screens/HomeScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, SafeAreaView, StyleSheet,ActivityIndicator } from 'react-native';
 
 import MainHeader from '../components/MainHeader';
 import ImagePaths from '../utils/ImagePaths';
 import mStyle from '../../AppStyles';
 import colors from '../utils/Colors';
+import axios from "react-native-axios"
 
 // import '../assets/fonts/Montserrat/ProtestRiot-Regular.ttf';
 
 const HomeScreen = ({navigation}) => {
 
-  // const customFontFamily = 'ProtestRiot-Regular';
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [ordersData, setOrdersData] = useState([]);
 
-  // useEffect(() => {
-  //   // Set your custom font family here
-  //   Text.defaultProps.style = { fontFamily: customFontFamily };
-  // }, []);
   
-//   // Import the custom font
-// import './src/assets/fonts/Montserrat/ProtestRiot-Regular.ttf';
+  const fetchNextPage = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/processing-orders/?page=${currentPage + 1}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      setOrdersData([...ordersData, ...response.data]);
+      setCurrentPage(currentPage + 1);
+    } catch (error) {
+      console.log(error?.response, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// // Define the custom font family
-// const customFontFamily = 'ProtestRiot-Regular';
-
-// // Set the custom font family as the default for the entire app
-// Text.defaultProps = Text.defaultProps || {};
-// Text.defaultProps.style = Text.defaultProps.style || {};
-// Text.defaultProps.style.fontFamily = customFontFamily;
-
-// useEffect(() => {
-//   // Set your custom font family here
-//   Text.defaultProps.style = { fontFamily: 'YourCustomFont' };
-// }, []);
-
-
-
-
+  useEffect(() => {
+    fetchNextPage(); // Fetch the first page when the component mounts
+  }, []);
+  
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const ordersData = [
-    {
-      id: '1',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: 'Accepted',
-    },
-    {
-      id: '2',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: 'Picked up',
-    },
-    {
-      id: '3',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: '',
-    },
-    {
-      id: '4',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: '',
-    },
-    {
-      id: '5',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: '',
-    },
-    {
-      id: '6',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: '',
-    },
-    {
-      id: '7',
-      productName: 'LumbarCloud™ Hybrid',
-      productType: 'Hougang',
-      imageUrl: ImagePaths.productImage,
-      price: '$4.5',
-      orderNo: 'Order No. SE422654',
-      status: '',
-    },
-    // Add more orders as needed
-  ];
+  // const ordersData = [
+  //   {
+  //     id: '1',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: 'Accepted',
+  //   },
+  //   {
+  //     id: '2',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: 'Picked up',
+  //   },
+  //   {
+  //     id: '3',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: '',
+  //   },
+  //   {
+  //     id: '4',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: '',
+  //   },
+  //   {
+  //     id: '5',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: '',
+  //   },
+  //   {
+  //     id: '6',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: '',
+  //   },
+  //   {
+  //     id: '7',
+  //     productName: 'LumbarCloud™ Hybrid',
+  //     productType: 'Hougang',
+  //     imageUrl: ImagePaths.productImage,
+  //     price: '$4.5',
+  //     orderNo: 'Order No. SE422654',
+  //     status: '',
+  //   },
+  //   // Add more orders as needed
+  // ];
 
   const toggleSelection = (itemId) => {
     const updatedSelection = selectedItems.includes(itemId)
@@ -113,23 +117,32 @@ const HomeScreen = ({navigation}) => {
 
     setSelectedItems(updatedSelection);
   };
+  const MAX_NAME_LENGTH = 20; // Define the maximum length for the product name
 
+  // Function to truncate the product name if it exceeds the maximum length
+  const truncateName = (name) => {
+    if (name && name.length > MAX_NAME_LENGTH) {
+      return name.substring(0, MAX_NAME_LENGTH) + '...'; // Add ellipsis if the name is truncated
+    }
+    return name;
+  };
 
 
   const renderOrderItem = ({ item }) => (
     <View style={styles.orderItem}>
     
       <View style={styles.productContainer}>
-        <Image source={item.imageUrl} style={styles.productImage} />
+        {/* <Image source={item.imageUrl} style={styles.productImage} /> */}
         <Text style={{position: 'absolute', bottom: 12, color: colors.success, fontWeight: '500'}}>{item.status}</Text>
       </View>
 
       {/* Middle product information */}
       <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.productName}</Text>
-        <Text style={[styles.productPrice, {color: colors.darkT}]}>{item.price}</Text>
-        <Text style={[mStyle.p1, {color: colors.darkT, marginBottom :4}]}>{item.productType}</Text>
-        <Text style={[mStyle.p2, {color: colors.lightT}]}>{item.orderNo}</Text>
+      <Text style={styles.productName}>{truncateName(item.products[0]?.name)}</Text>
+
+        <Text style={[styles.productPrice, {color: colors.darkT}]}>${item.products[0]?.price}</Text>
+        <Text style={[mStyle.p1, {color: colors.darkT, marginBottom :4}]}>Hougang</Text>
+        <Text style={[mStyle.p2, {color: colors.lightT}]}>Order No. SE422654</Text>
 
         <TouchableOpacity style={[mStyle.button, {width: 80, height: 30, marginVertical: 5}]} 
         onPress={() => navigation.navigate('MapRoute')}>
@@ -154,6 +167,18 @@ const HomeScreen = ({navigation}) => {
     </View>
   );
 
+  const renderFooter = () => {
+    if (loading) {
+      return (
+        <View style={styles.footer}>
+          <ActivityIndicator animating size="large" color={colors.primary} />
+        </View>
+      );
+    } else {
+      return null;
+    }
+  };
+
   
 
   return (
@@ -164,8 +189,11 @@ const HomeScreen = ({navigation}) => {
       
       <FlatList
         data={ordersData}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderOrderItem}
+        ListFooterComponent={renderFooter}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.1} // Trigger fetchNextPage when 90% scrolled to the end
       />
 
       <View style={{marginHorizontal: 15, marginVertical: 12}}>
@@ -233,6 +261,13 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
   },
+  footer:{
+    justifyContent:"center",
+    alignItems:"center",
+    marginTop:250,
+    flex:1
+  }
+
 });
 
 export default HomeScreen;
