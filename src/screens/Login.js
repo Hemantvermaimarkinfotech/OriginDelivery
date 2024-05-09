@@ -73,13 +73,15 @@ const LoginScreen = ({navigation}) => {
       {/* Email and Password Input */}
       <View style={styles.inputContainer}>
         <TextInput
+          placeholderTextColor={"#23233C"}
           placeholder="Email"  onChangeText={text=>setEmail(text)} 
           style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0}]}
         />
         <View style={{marginVertical: 10}} />
         <TextInput
+        placeholderTextColor={"#23233C"}
           placeholder="Password"
-          // secureTextEntry={true}
+          secureTextEntry={true}
           onChangeText={text=>setPassword(text)}
           style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0}]}
         />

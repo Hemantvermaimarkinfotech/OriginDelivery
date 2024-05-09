@@ -62,7 +62,8 @@ const TrackingStack = () => (
 
 const SettingsStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }} />
+    {/* <Stack.Screen name="Setting" component={SettingScreen} options={{ headerShown: false }} /> */}
+    <Stack.Screen name="Profile" component={UserProfileScreen} options={{ headerShown: false }} />
     {/* <Stack.Screen name="UpdateProfile" component={EditProfile} options={{ headerShown: false }} /> */}
     {/* Add more screens for Setting subpages if needed */}
   </Stack.Navigator>

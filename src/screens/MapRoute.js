@@ -1,97 +1,141 @@
-// src/screens/LoginScreen.js
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Dimensions, PermissionsAndroid } from 'react-native';
+
 import mStyle from '../../AppStyles';
 import ImagePaths from '../utils/ImagePaths';
 import colors from '../utils/Colors';
-import ProgressSteps, { Title, Content } from '@joaosousa/react-native-progress-steps';
-
+import Geolocation from '@react-native-community/geolocation';
 
 const MapRouteScreen = () => {
 
-  const [step, setStep] = useState(0);
-  
-  const handleButtonPress = () => {
-    // Handle button press action here
-    console.log('Button Pressed');
+  const [location, setLocation] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // New state to indicate loading
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const granted = await requestLocationPermission();
+        if (granted) {
+          Geolocation.getCurrentPosition(
+            position => {
+              const { latitude, longitude } = position.coords;
+              setLocation({ latitude, longitude });
+              setLoading(false); // Set loading to false when location is fetched
+            },
+            error => {
+              setError(error.message);
+              setLoading(false); // Set loading to false in case of error
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+          );
+        } else {
+          setError('Location permission denied');
+          setLoading(false); // Set loading to false if permission denied
+        }
+      } catch (err) {
+        setError(err.message);
+        setLoading(false); // Set loading to false in case of error
+      }
+    };
+
+    fetchLocation(); // Fetch location when component mounts
+
+    // Clean up: clear watch
+    return () => {
+      Geolocation.clearWatch();
+    };
+  }, []);
+
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'This app needs access to your location.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
   };
 
-
   return (
-    <>
-    {/* <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-       
-    </View> */}
-    
-
-
     <ImageBackground
-      source={ImagePaths.mapBackground} // Replace with your background image source
-      style={styles.backgroundImage}>
-
+      source={ImagePaths.mapBackground}
+      style={styles.backgroundImage}
+    >
       <View style={styles.container}>
-        {/* <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          <Marker coordinate={{ latitude: 37.78825, longitude: -122.4324 }} title="Marker Title" />
-        </MapView> */}
-
-        {/* Information View */}
         <View style={styles.infoView}>
-            <View style={{marginTop: 10}} />
-            <View style={{paddingHorizontal: 20, gap: 20}}>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ marginTop: 5, alignItems: "center", height: "100%" }}>
+              <View style={{ height: 15, width: 15, backgroundColor: "#30B0C9", borderRadius: 8 }} />
+              <View style={{ height: "28%", width: 2, backgroundColor: "#30B0C9" }}></View>
+              <View style={{ height: 15, width: 15, borderWidth: 1, borderColor: "#30B0C9", borderRadius: 8 }} />
+              <View style={{ height: "22%", width: 2, backgroundColor: "#30B0C9" }}></View>
+              <View style={{ height: 15, width: 15, borderWidth: 1, borderColor: "#30B0C9", borderRadius: 8 }} />
+            </View>
+
+            <View style={{ paddingHorizontal: 20, gap: 20 }}>
               <View>
                 <Text style={styles.infoTitle}>Current Address</Text>
-                <Text style={styles.infoSubTitle}>Richard Hotel, {'\n'}320 Havelock Road, Robertson Singapore, {'\n'}Mob: +97354-73523</Text>
+                {loading ? ( // Show loading indicator if location is being fetched
+                  <Text style={styles.infoSubTitle}>Fetching location...</Text>
+                ) : error ? ( // Show error message if there's an error
+                  <Text style={styles.infoSubTitle}>Error: {error}</Text>
+                ) : location ? ( // Show location if available
+                  <View>
+                    <Text style={styles.infoSubTitle}>Latitude: {location.latitude}</Text>
+                    <Text style={styles.infoSubTitle}>Longitude: {location.longitude}</Text>
+                  </View>
+                ) : null}
               </View>
               <View>
                 <Text style={styles.infoTitle}>Warehouse Address</Text>
                 <Text style={styles.infoSubTitle}>Girls’ Home, 1 Defu Ave 1, Singapore</Text>
-                <Text style={styles.infoSubTitle}><Text style={{fontWeight: 600, color: '#000'}}>2KM</Text> 6min</Text>
+                <Text style={styles.infoSubTitle}><Text style={{ fontWeight: 600, color: '#000' }}>2KM</Text> 6min</Text>
               </View>
               <View>
                 <Text style={styles.infoTitle}>Customer Address</Text>
                 <Text style={styles.infoSubTitle}>Adam, {'\n'}320 Havelock Road, Robertson Singapore, {'\n'}Mob: +97354-73523</Text>
               </View>
             </View>
-            <View style={{marginTop: 30}} />
+          </View>
 
-            <View style={{paddingHorizontal: 20, gap: 20}}>
-              <TouchableOpacity style={[mStyle.button]} onPress={ () => {}}>
-                <Text style={[mStyle.buttonText]}>Accept This Order</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={ () => {}}>
-                <Text style={{textAlign: 'center', fontSize: 16, fontWeight: 500, textDecorationLine: 'underline' }}>Visit Google Map</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{marginTop: 10}} />
+          <View style={{ marginTop: 30 }} />
+
+          <View style={{ paddingHorizontal: 20, gap: 20 }}>
+            <TouchableOpacity style={[mStyle.button]} onPress={() => { }}>
+              <Text style={[mStyle.buttonText]}>Accept This Order</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { }}>
+              <Text style={styles.googleMapText}>Visit Google Map</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ marginTop: 10 }} />
         </View>
       </View>
     </ImageBackground>
-
-    </>
   );
 };
 
+const windowWidth = Dimensions.get('window').width; // Get the window width
 
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    objectFit: 'contain'
+    resizeMode: 'cover', // Ensure the image covers the entire container
   },
   container: {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  map: {
-    // ...StyleSheet.absoluteFillObject,
   },
   infoView: {
     width: '90%',
@@ -99,31 +143,27 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 20,
     marginBottom: '10%',
-    minHeight: 400,
-    justifyContent: 'flex-end'
+    minHeight: 300,
+    justifyContent: 'flex-end',
   },
   infoTitle: {
     fontSize: 18,
     fontWeight: '500',
     color: '#23233C',
-    marginBottom: 5
+    marginBottom: 5,
   },
   infoSubTitle: {
     fontSize: 14,
     color: '#838383',
-    lineHeight: 20
+    lineHeight: 20,
   },
-  stepContent: {
-    // flex: 1,
-    justifyContent: 'center',
-    // alignItems: 'center',
-    // padding: 20,
-    // backgroundColor: 'white',
-  },
-  infoText: {
+  googleMapText: {
+    textAlign: 'center',
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontWeight: '500',
+    textDecorationLine: 'underline',
+    color: '#000',
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#3498db',

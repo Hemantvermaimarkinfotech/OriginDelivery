@@ -142,7 +142,7 @@ const HomeScreen = ({navigation}) => {
 
         <Text style={[styles.productPrice, {color: colors.darkT}]}>${item.products[0]?.price}</Text>
         <Text style={[mStyle.p1, {color: colors.darkT, marginBottom :4}]}>Hougang</Text>
-        <Text style={[mStyle.p2, {color: colors.lightT}]}>Order No. SE422654</Text>
+        <Text style={[mStyle.p2, {color: colors.lightT}]}>Order No. {item?.id}</Text>
 
         <TouchableOpacity style={[mStyle.button, {width: 80, height: 30, marginVertical: 5}]} 
         onPress={() => navigation.navigate('MapRoute')}>
