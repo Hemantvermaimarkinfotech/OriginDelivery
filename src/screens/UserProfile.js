@@ -1,63 +1,61 @@
-import React, { useState, useContext, useEffect ,useCallback} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import mStyle from '../../AppStyles';
 import { AuthContext } from '../components/AuthProvider';
 import axios from 'react-native-axios'; // Importing axios properly
+import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
 
 const UserProfileScreen = ({ navigation }) => {
-  const [profile, setProfile] = useState(null); // Changed initial state to null
-  const { userToken } = useContext(AuthContext); // Removed setUserToken since it's not used
+  const { userToken } = useContext(AuthContext);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused(); // useIsFocused hook to track screen focus
+
+  const fetchData = async () => {
+    console.log("userToken?accessToken",userToken?.token)
+    try {
+      const response = await axios.get(
+        `https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/profile`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken?.token}`
+          },
+        },
+      );
+      console.log("Profile data", response.data);
+      setProfile(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.log('error', error.response.data);
+      setLoading(false);
+      Alert.alert('Error', 'Failed to fetch profile data. Please try again.');
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const config = {
-          headers: {
-            'Authorization': `Bearer ${userToken?.token}`
-          }
-        };
-
-        const response = await axios.get('https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/profile', config);
-        console.log('Profile data:', response.data);
-        setProfile(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.log('Error fetching profile data:', error);
-        if (error.response) {
-          console.log('Response data:', error.response.data);
-          console.log('Response status:', error.response.status);
-          Alert.alert('Error', `Request failed with status code ${error.response.status}`);
-        } else {
-          Alert.alert('Error', 'Network Error. Please check your internet connection.');
-        }
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [userToken]);
-
-  // Callback function to handle profile updates
-  const handleProfileUpdate = (updatedProfile) => {
-    // Update profile state with the updated profile data
-    setProfile(updatedProfile);
-  };
+    if (isFocused) {
+      fetchData();
+    }
+  }, [isFocused]); // useEffect depends on isFocused
 
   if (loading) {
     return (
-      <View style={{justifyContent:"center",alignItems:"center"}}>
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <ActivityIndicator size="large" color="#30B0C9" />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {profile && (
         <View style={styles.profileContainer}>
           <Text style={styles.label}>Name:</Text>
           <Text style={styles.text}>{profile.user_name}</Text>
+
+          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.text}>{profile.email}</Text>
 
           <Text style={styles.label}>Surname:</Text>
           <Text style={styles.text}>{profile.delivery_man_surname}</Text>
@@ -82,12 +80,12 @@ const UserProfileScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={[mStyle.button, styles.button]}
-            onPress={() => navigation.navigate('EditProfile', { profileData: profile, onUpdateProfile: handleProfileUpdate })} >
+            onPress={() => navigation.navigate('EditProfile')}>
             <Text style={mStyle.buttonText}>Edit</Text>
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 

@@ -5,67 +5,88 @@ import mStyle from '../../AppStyles';
 import ImagePaths from '../utils/ImagePaths';
 import colors from '../utils/Colors';
 import Geolocation from '@react-native-community/geolocation';
+import axios from "react-native-axios"
 
-const MapRouteScreen = () => {
-
+const MapRouteScreen = ({route}) => {
+  const { productId } = route.params;
+  console.log(" productId ", productId )
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // New state to indicate loading
+  const [loading, setLoading] = useState(true);
+  const [address, setAddress] = useState(null); 
+  const [showCustomerAddress, setShowCustomerAddress] = useState(false);
+  const [showWarehouseAddress, setShowWarehouseAddress] = useState(false);
 
-  useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const granted = await requestLocationPermission();
-        if (granted) {
-          Geolocation.getCurrentPosition(
-            position => {
-              const { latitude, longitude } = position.coords;
-              setLocation({ latitude, longitude });
-              setLoading(false); // Set loading to false when location is fetched
-            },
-            error => {
-              setError(error.message);
-              setLoading(false); // Set loading to false in case of error
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-          );
-        } else {
-          setError('Location permission denied');
-          setLoading(false); // Set loading to false if permission denied
-        }
-      } catch (err) {
-        setError(err.message);
-        setLoading(false); // Set loading to false in case of error
-      }
-    };
-
-    fetchLocation(); // Fetch location when component mounts
-
-    // Clean up: clear watch
-    return () => {
-      Geolocation.clearWatch();
-    };
-  }, []);
-
-  const requestLocationPermission = async () => {
+  const GetShippingAddress = async (productId) => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      const response = await axios.get(
+        `https://staging11.originmattress.com.sg/wp-json/woocommerce/v1/shipping-address/${productId}`,
         {
-          title: 'Location Permission',
-          message: 'This app needs access to your location.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }
       );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.warn(err);
-      return false;
+      console.log('Shipping Address:', response.data); 
+      setAddress(response.data); 
+    } catch (error) {
+      console.error('Error fetching Shipping Address:', error);
+      setAddress(null);
+    } finally {
+      setLoading(false); 
     }
   };
 
+  useEffect(() => {
+    GetShippingAddress(productId); 
+  }, [productId]); 
+
+  useEffect(() => {
+    // Request permission to access location
+    const requestLocationPermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'This app needs access to your location.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // If permission is granted, get the current location
+          Geolocation.getCurrentPosition(
+            position => {
+              setLocation(position.coords);
+            },
+            error => console.log(error.message),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+          );
+        } else {
+          console.log('Location permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    };
+
+    requestLocationPermission();
+
+    // Clean up
+    return () => {
+      // Clean up your location subscription here if necessary
+    };
+  }, []);
+
+  const handleAcceptOrder = () => {
+    setShowWarehouseAddress(true);
+    setShowCustomerAddress(true);
+  };
+
+
+  
   return (
     <ImageBackground
       source={ImagePaths.mapBackground}
@@ -85,16 +106,11 @@ const MapRouteScreen = () => {
             <View style={{ paddingHorizontal: 20, gap: 20 }}>
               <View>
                 <Text style={styles.infoTitle}>Current Address</Text>
-                {loading ? ( // Show loading indicator if location is being fetched
-                  <Text style={styles.infoSubTitle}>Fetching location...</Text>
-                ) : error ? ( // Show error message if there's an error
-                  <Text style={styles.infoSubTitle}>Error: {error}</Text>
-                ) : location ? ( // Show location if available
-                  <View>
-                    <Text style={styles.infoSubTitle}>Latitude: {location.latitude}</Text>
-                    <Text style={styles.infoSubTitle}>Longitude: {location.longitude}</Text>
-                  </View>
-                ) : null}
+              
+                  {/* <Text style={styles.infoSubTitle}>Richard Hotel, 320 Havelock Road, Robertson Singapore, Mob: +97354-73523</Text> */}
+                   <Text>Latitude: {location?.latitude}</Text>
+                  <Text>Longitude: {location?.longitude}</Text>
+
               </View>
               <View>
                 <Text style={styles.infoTitle}>Warehouse Address</Text>
@@ -103,7 +119,7 @@ const MapRouteScreen = () => {
               </View>
               <View>
                 <Text style={styles.infoTitle}>Customer Address</Text>
-                <Text style={styles.infoSubTitle}>Adam, {'\n'}320 Havelock Road, Robertson Singapore, {'\n'}Mob: +97354-73523</Text>
+                <Text style={styles.infoSubTitle}>{address?.shipping_address}</Text>
               </View>
             </View>
           </View>

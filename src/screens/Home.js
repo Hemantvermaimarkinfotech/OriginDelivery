@@ -17,19 +17,19 @@ const HomeScreen = ({navigation}) => {
   const [ordersData, setOrdersData] = useState([]);
 
   
-  const fetchNextPage = async () => {
+  const UndeliveredOrder = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/processing-orders/?page=${currentPage + 1}`,
+        `https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/processing-orders/`,
         {
           headers: {
             'Content-Type': 'application/json',
           },
         },
       );
-      setOrdersData([...ordersData, ...response.data]);
-      setCurrentPage(currentPage + 1);
+ 
+      setOrdersData(response.data);
     } catch (error) {
       console.log(error?.response, 'error');
     } finally {
@@ -38,7 +38,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    fetchNextPage(); // Fetch the first page when the component mounts
+    UndeliveredOrder(); // Fetch the first page when the component mounts
   }, []);
   
   const [selectedItems, setSelectedItems] = useState([]);
@@ -132,7 +132,8 @@ const HomeScreen = ({navigation}) => {
     <View style={styles.orderItem}>
     
       <View style={styles.productContainer}>
-        {/* <Image source={item.imageUrl} style={styles.productImage} /> */}
+      <Image   source={{ uri: item?.products[0]?.image || 'fallback_image_url' }} style={styles.productImage} />
+
         <Text style={{position: 'absolute', bottom: 12, color: colors.success, fontWeight: '500'}}>{item.status}</Text>
       </View>
 
@@ -142,14 +143,16 @@ const HomeScreen = ({navigation}) => {
 
         <Text style={[styles.productPrice, {color: colors.darkT}]}>${item.products[0]?.price}</Text>
         <Text style={[mStyle.p1, {color: colors.darkT, marginBottom :4}]}>Hougang</Text>
-        <Text style={[mStyle.p2, {color: colors.lightT}]}>Order No. {item?.id}</Text>
+        <Text style={[mStyle.p2, {color: colors.lightT}]}>Order No. {item.products[0]?.id}</Text>
 
         <TouchableOpacity style={[mStyle.button, {width: 80, height: 30, marginVertical: 5}]} 
-        onPress={() => navigation.navigate('MapRoute')}>
+          onPress={() => navigation.navigate('MapRoute', { productId: item.id })}
+         >
         <View style={mStyle.row}>
             <Text style={[mStyle.buttonText, {fontSize: 14}]}>Route</Text>
         </View>
       </TouchableOpacity>
+      
         
       </View>
 
@@ -192,7 +195,7 @@ const HomeScreen = ({navigation}) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderOrderItem}
         ListFooterComponent={renderFooter}
-        onEndReached={fetchNextPage}
+        onEndReached={UndeliveredOrder}
         onEndReachedThreshold={0.1} // Trigger fetchNextPage when 90% scrolled to the end
       />
 
@@ -204,6 +207,7 @@ const HomeScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
     </View>
+    
   );
 };
 
@@ -229,7 +233,7 @@ const styles = StyleSheet.create({
   productImage: {
     height: 80,
     width: 80,
-    objectFit: 'contain'
+    objectFit: 'contain',
   },
   productInfo: {
     flex: 1,

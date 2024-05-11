@@ -1,153 +1,183 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import mStyle from '../../AppStyles';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { AuthContext } from '../components/AuthProvider';
-import axios from 'react-native-axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ScrollView } from 'react-native-gesture-handler';
-import Loader from '../components/Loader';
+import axios from "react-native-axios"
+import mStyle from '../../AppStyles';
 
-const EditProfile = ({ navigation, route }) => {
-  const { profileData } = route.params; // Access profile data from navigation parameters
-  const { userToken, setUserToken } = useContext(AuthContext);
+const UpdateProfile = ({ navigation }) => {
+  const { userToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("mohammad.sameer@imarkinfotech.com");
+  const [userName, setUserName] = useState("sameerrr");
+  const [userFullName, setUserFullName] = useState("sameer star");
+  const [surName, setSurName] = useState("star");
+  const [phoneNumber, setPhoneNumber] = useState("66786786786");
+  const [iban, setIban] = useState("JGHDYB7866hTHR");
+  const [gender, setGender] = useState("Male");
+  const [age, setAge] = useState("20");
+  const [homeAddress, setHomeAddress] = useState("Malerkotla");
+  const [workAddress, setWorkAddress] = useState("Chandigarh");
 
-  // Set initial state using profile data
-  const [firstName, setFirstName] = useState(profileData.user_full_name || '');
-  const [surName, setSurName] = useState(profileData.delivery_man_surname || '');
-  const [phoneNuber, setPhoneNumber] = useState(profileData.delivery_man_phone || '');
-  const [iban, setIban] = useState(profileData.delivery_man_iban || '');
-  const [age, setAge] = useState(profileData.delivery_man_age || '');
-  const [gender, setGender] = useState(profileData.delivery_man_gender || '');
-  const [homeAddress, setHomeAddress] = useState(profileData.delivery_man_home_address || '');
-  const [workAddress, setWorkAddress] = useState(profileData.delivery_man_work_address || '');
-
-  // Function to update profile
   const UpdateProfile = async () => {
-     setLoading(true); 
-    const data = JSON.stringify({
-      "email": "mohammad.sameer@imarkinfotech.com",
-      "user_name": "sameer",
-      "user_full_name": "sameer star",
-      "delivery_man_surname": "star",
-      "delivery_man_phone": "66786786786",
-      "delivery_man_iban": "JGHDYB7866hTHR",
-      "delivery_man_gender": "Male",
-      "delivery_man_age": "20",
-      "delivery_man_home_address": "Malerkotla",
-      "delivery_man_work_address": "Chandigarh"
-    });
-  
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://staging11.originmattress.com.sg/wp-json/delivery-man/v1/update',
-      headers: { 
-        'Authorization': 'uU2xzRtIVvMkl7Nmf0LlWAjPIW9AvpU4pSG7qfqdDnt_199', 
-        'Content-Type': 'application/json'
-      },
-      data: data
+    setLoading(true);
+    const userData = {
+      email: email,
+      user_name: userName,
+      user_full_name: userFullName,
+      delivery_man_surname: surName,
+      delivery_man_phone: phoneNumber,
+      delivery_man_iban: iban,
+      delivery_man_gender: gender,
+      delivery_man_age: age,
+      delivery_man_home_address: homeAddress,
+      delivery_man_work_address: workAddress
     };
-  
+
     try {
-      const response = await axios.request(config);
-      console.log(JSON.stringify(response.data));
-      // Call the onUpdateProfile function to update profile data in UserProfileScreen
-      route.params.onUpdateProfile(response.data);
-      navigation.goBack();
+      const response = await axios.post(
+        'https://staging11.originmattress.com.sg/wp-json/delivery-man/v1/update',
+        userData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken?.token}`
+          }
+        }
+      );
+
+      if (response.data.success) {
+        console.log('Success', response.data.message)
+        Alert.alert('Success', response.data.message);
+        navigation.goBack();
+      } else {
+        Alert.alert('Error', response.data.message);
+      }
+      setLoading(false);
     } catch (error) {
-      console.log(error); // Log any errors that occur during the request
+      setLoading(false);
+      console.log(error);
+      Alert.alert('Error', 'Failed to update profile. Please try again.');
     }
   };
-  
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <View style={{ marginHorizontal: 15, marginVertical: 20 }}>
-        <View style={styles.marginHorizontal}>
-          <Text style={styles.label}>First Name</Text>
-          <TextInput
-            style={styles.input}
-            value={firstName}
-            onChangeText={text => setFirstName(text)}
-            placeholder={'First Name'}
-          />
-          <Text style={styles.label}>Surname</Text>
-          <TextInput
-            style={styles.input}
-            value={surName}
-            onChangeText={text => setSurName(text)}
-            placeholder={'Surname'}
-          />
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setPhoneNumber(text)}
-            value={phoneNuber}
-            placeholder={'Phone Number'}
-          />
-          <Text style={styles.label}>IBAN</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setIban(text)}
-            value={iban}
-            placeholder={'IBAN'}
-          />
-          <Text style={styles.label}>Age</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setAge(text)}
-            value={age}
-            placeholder={'Age'}
-          />
-          <Text style={styles.label}>Gender</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setGender(text)}
-            value={gender}
-            placeholder={'Gender'}
-          />
-          <Text style={styles.label}>Home Address</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setHomeAddress(text)}
-            value={homeAddress}
-            placeholder={'Home Address'}
-          />
-          <Text style={styles.label}>Work Address</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={text => setWorkAddress(text)}
-            value={workAddress}
-            placeholder={'Work Address'}
-          />
-          {loading?
-          <Loader/>:(
-            <TouchableOpacity style={[mStyle.button, { marginTop: 20 }]} onPress={() => UpdateProfile()}>
-            <Text style={mStyle.buttonText}>Save</Text>
-          </TouchableOpacity>
-          )}
-                    {loading && <Loader />} 
-          {/* {loading && <ActivityIndicator style={{ marginTop: 20 }} size="large" color="#0000ff" />} */}
-        </View>
-      </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={email}
+        onChangeText={text => setEmail(text)}
+        placeholder={'Email'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={userName}
+        onChangeText={text => setUserName(text)}
+        placeholder={'User Name'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={userFullName}
+        onChangeText={text => setUserFullName(text)}
+        placeholder={'User Full Name'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={surName}
+        onChangeText={text => setSurName(text)}
+        placeholder={'Surname'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={phoneNumber}
+        onChangeText={text => setPhoneNumber(text)}
+        placeholder={'Phone Number'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={iban}
+        onChangeText={text => setIban(text)}
+        placeholder={'IBAN'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={gender}
+        onChangeText={text => setGender(text)}
+        placeholder={'Gender'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={age}
+        onChangeText={text => setAge(text)}
+        placeholder={'Age'}
+        placeholderTextColor={"#23233C"}
+        color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={homeAddress}
+        onChangeText={text => setHomeAddress(text)}
+        placeholder={'Home Address'}
+        placeholderTextColor={"#23233C"}
+      color={"#23233C"}
+      />
+      <TextInput
+        style={styles.input}
+        value={workAddress}
+        onChangeText={text => setWorkAddress(text)}
+        placeholder={'Work Address'}
+        placeholderTextColor={"#23233C"}
+      color={"#23233C"}
+      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <TouchableOpacity style={[mStyle.button, styles.button]} onPress={UpdateProfile}>
+          <Text style={mStyle.buttonText}>Update Profile</Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 10,
+  container: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor:"#fff",
+    paddingBottom:20
   },
   input: {
-    fontSize: 16,
+    width: '90%',
+    height: 55,
+    marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 10,
+    borderColor: '#DEDEDE',
+    borderRadius: 5,
+    paddingLeft: 10,
+    
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 20,
+    width:"90%"
   },
 });
 
-export default EditProfile;
+export default UpdateProfile;

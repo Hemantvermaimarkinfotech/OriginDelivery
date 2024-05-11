@@ -1,14 +1,16 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-
+import axios from "react-native-axios"
+import { AuthContext } from '../components/AuthProvider';
 
 const PayoutScreen = () => {
+  const [comision, setComision] = useState([]);
+  const { userToken } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
 
   const [items, setItems] = useState([]);
-
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [months, setMonths] = useState([]);
 
@@ -28,12 +30,11 @@ const PayoutScreen = () => {
       const monthIndex = (currentDate.getMonth() - i + 12) % 12;
       const monthName = getMonthName(monthIndex);
       const year = currentDate.getFullYear();
-      last12Months.push({ label: `${monthName} ${year}`, value: i });
+      last12Months.push({ label: `${monthName} ${year}`, value: monthIndex });
     }
 
     return last12Months.reverse();
   };
-
 
   useEffect(() => {
     const monthsArray = getLast12Months();
@@ -41,119 +42,63 @@ const PayoutScreen = () => {
     setItems(monthsArray);
   }, []);
 
- 
+  const calculateTotalAmount = () => {
+    if (!comision) return 0; // Return 0 if comision is undefined
+    let totalAmount = 0;
+    comision.forEach(item => {
+      totalAmount += parseFloat(item.commission);
+    });
+    return totalAmount.toFixed(2); // Convert to fixed decimal places
+  };
 
+  const GetCommision = async (selectedMonth) => {
+    try {
+      const response = await axios.get(
+        `https://staging11.originmattress.com.sg/wp-json/delivery-man/v1/comission?month=${selectedMonth}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken?.token}`
+          },
+        }
+      );
+      console.log('Comision', response.data);
+      setComision(response.data);
+    } catch (error) {
+      console.error('Error comision:', error);
+      setComision([]);
+    }
+  };
 
-  const payoutData = [
-    {
-      "id": 1,
-      "order_no": "ORD12345",
-      "date": "2024-02-09",
-      "amount": '$75.50'
-    },
-    {
-      "id": 2,
-      "order_no": "ORD67890",
-      "date": "2024-02-10",
-      "amount": '$75.50'
-    },
-    {
-      "id": 3,
-      "order_no": "ORD54321",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 4,
-      "order_no": "ORD44320",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 5,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 6,
-      "order_no": "ORD75671",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 7,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 8,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 9,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 10,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 11,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 12,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-    {
-      "id": 13,
-      "order_no": "ORD64000",
-      "date": "2024-02-11",
-      "amount": '$75.50'
-    },
-  ];
+  useEffect(() => {
+    GetCommision(selectedMonth);
+  }, [selectedMonth]);
 
-
-  const payoutSection = ({item}) => {
+  const payoutSection = ({ item }) => {
     return (
       <View style={styleA.container}>
         <View style={styleA.column}>
           <Text style={styleA.title}>Order No.</Text>
-          <Text style={styleA.subtitle}>{item.order_no}</Text>         
+          <Text style={styleA.subtitle}>{item?.order_number}</Text>
         </View>
         <View style={styleA.column}>
-          <Text style={styleA.title}>Date</Text>  
-          <Text style={styleA.subtitle}>{item.date}</Text>             
+          <Text style={styleA.title}>Date</Text>
+          <Text style={styleA.subtitle}>{item?.completed_date}</Text>
         </View>
         <View style={styleA.column}>
-          <Text style={styleA.title}>Amount</Text>   
-          <Text style={styleA.subtitle}>{item.amount}</Text>            
+          <Text style={styleA.title}>Commission</Text>
+          <Text style={styleA.subtitle}>${item?.commission}</Text>
         </View>
       </View>
     )
   }
 
-
   return (
-    <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-       
-      <View style={{marginTop: 10}} />
-
+    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      <View style={{ marginTop: 10 }} />
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 20 }}>
-        <Text style={{fontSize: 20, fontWeight: 500}}>Filter:</Text>
-        <View style={{width: '80%'}}>
+        <Text style={{ fontSize: 20, fontWeight: '500' }}>Filter:</Text>
+        <View style={{ width: '80%' }}>
           <DropDownPicker
             open={open}
             value={value}
@@ -162,29 +107,29 @@ const PayoutScreen = () => {
             setValue={setValue}
             setItems={setItems}
             placeholder={'Choose a month.'}
-            // style={{borderColor: '#DEDEDE'}}
+            onChangeValue={(value) => {
+              setSelectedMonth(value);
+              setValue(value);
+            }}
           />
         </View>
       </View>
-
-
-
-      <View style={{marginTop: 20}} />
-      <FlatList 
-       data={payoutData}
-       renderItem={payoutSection}
-       style={{zIndex: -1}}    
+      <View style={{ marginTop: 20 }} />
+      <FlatList
+        data={comision}
+        renderItem={payoutSection}
+        style={{ zIndex: -1 }}
+        keyExtractor={(item, index) => index.toString()}
       />
-      <View style={{borderTopWidth: 1.6, borderColor: '#E3E3E3'}}>
-          <View style={{flexDirection: 'column', alignItems: 'flex-end', marginHorizontal: 20, paddingVertical: 10}}>
-            <Text style={styleA.title}>Total Amount</Text>
-            <Text style={[styleA.subtitle, {color: '#000'}]}>$1500.5</Text>
-          </View>
+      <View style={{ borderTopWidth: 1.6, borderColor: '#E3E3E3' }}>
+        <View style={{ flexDirection: 'column', alignItems: 'flex-end', marginHorizontal: 20, paddingVertical: 10 }}>
+          <Text style={styleA.title}>Total Amount</Text>
+          <Text style={[styleA.subtitle, { color: '#000' }]}>${calculateTotalAmount()}</Text>
+        </View>
       </View>
     </View>
   );
 };
-
 
 const styleA = StyleSheet.create({
   container: {
@@ -203,15 +148,12 @@ const styleA = StyleSheet.create({
     color: '#000000',
     fontWeight: '500',
   },
-  subtitle:{
+  subtitle: {
     fontSize: 16,
     color: '#888888',
     fontWeight: '500',
     marginVertical: 5
   }
 });
-
-
-
 
 export default PayoutScreen;

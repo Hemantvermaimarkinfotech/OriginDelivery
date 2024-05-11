@@ -5,7 +5,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import mStyle from '../../AppStyles';
 
 
-const TrackingStatusScreen = () => {
+const TrackingStatusScreen = ({route}) => {
+  const { id, trackingData } = route.params;
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);

@@ -54,9 +54,10 @@ const PayoutStack = () => (
 
 const TrackingStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Tracking" component={TrackingScreen} options={{ headerShown: false }}/>
-    <Stack.Screen name="TrackingStatus" component={TrackingStatusScreen} options={{ headerShown: false }}/>
+  
+    {/* <Stack.Screen name="TrackingStatus" component={TrackingStatusScreen} options={{ headerShown: false }}/> */}
     {/* Add more screens for Tracking subpages if needed */}
+    <Stack.Screen name="Tracking" component={TrackingScreen} options={{ headerShown: false }}/>
   </Stack.Navigator>
 );
 
@@ -309,6 +310,17 @@ const MainStack = () => {
           },
           header: () => <TitleHeader title="EditProfile" navigation={navigation} />, 
         }} />
+           <Stack.Screen name="TrackingStatus" component={TrackingStatusScreen} options={{
+          title: 'Tracking',
+          headerStyle: {
+            backgroundColor: '#30B0C9', // Change the background color
+          },
+          headerTitleStyle: {
+            color: '#fff', // Change the text color
+          },
+          header: () => <TitleHeader title="Tracking" navigation={navigation} />, 
+        }} />
+       
 
       <Stack.Screen name="MapRoute" component={MapRouteScreen} 
         options={{
