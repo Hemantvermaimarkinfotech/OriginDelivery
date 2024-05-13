@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from "react-native-axios"
 import { AuthContext } from '../components/AuthProvider';
@@ -9,6 +9,7 @@ const PayoutScreen = () => {
   const { userToken } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [items, setItems] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -52,6 +53,7 @@ const PayoutScreen = () => {
   };
 
   const GetCommision = async (selectedMonth) => {
+    setIsLoading(true); // Show loader while fetching data
     try {
       const response = await axios.get(
         `https://staging11.originmattress.com.sg/wp-json/delivery-man/v1/comission?month=${selectedMonth}`,
@@ -67,6 +69,8 @@ const PayoutScreen = () => {
     } catch (error) {
       console.error('Error comision:', error);
       setComision([]);
+    } finally {
+      setIsLoading(false); // Hide loader after fetching data
     }
   };
 
@@ -83,7 +87,7 @@ const PayoutScreen = () => {
         </View>
         <View style={styleA.column}>
           <Text style={styleA.title}>Date</Text>
-          <Text style={styleA.subtitle}>{item?.completed_date}</Text>
+          <Text numberOfLines={1} style={styleA.subtitle}>{item?.completed_date}</Text>
         </View>
         <View style={styleA.column}>
           <Text style={styleA.title}>Commission</Text>
@@ -121,6 +125,11 @@ const PayoutScreen = () => {
         style={{ zIndex: -1 }}
         keyExtractor={(item, index) => index.toString()}
       />
+      {isLoading && (
+        <View style={[StyleSheet.absoluteFill, { alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }]}>
+          <ActivityIndicator size="large" color="#30B0C9" />
+        </View>
+      )}
       <View style={{ borderTopWidth: 1.6, borderColor: '#E3E3E3' }}>
         <View style={{ flexDirection: 'column', alignItems: 'flex-end', marginHorizontal: 20, paddingVertical: 10 }}>
           <Text style={styleA.title}>Total Amount</Text>
@@ -152,7 +161,8 @@ const styleA = StyleSheet.create({
     fontSize: 16,
     color: '#888888',
     fontWeight: '500',
-    marginVertical: 5
+    marginVertical: 5,
+    width: 100
   }
 });
 

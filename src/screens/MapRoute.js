@@ -7,7 +7,7 @@ import colors from '../utils/Colors';
 import Geolocation from '@react-native-community/geolocation';
 import axios from "react-native-axios"
 
-const MapRouteScreen = ({route}) => {
+const MapRouteScreen = ({route,navigation}) => {
   const { productId } = route.params;
   console.log(" productId ", productId )
   const [location, setLocation] = useState(null);
@@ -16,6 +16,14 @@ const MapRouteScreen = ({route}) => {
   const [address, setAddress] = useState(null); 
   const [showCustomerAddress, setShowCustomerAddress] = useState(false);
   const [showWarehouseAddress, setShowWarehouseAddress] = useState(false);
+  const handleNavigateToSecondPage = () => {
+    // Replace with desired coordinates
+    const latitude = 37.78825;
+    const longitude = -122.4324;
+
+    // Navigate to the second page with coordinates as route params
+    navigation.navigate('GoogleMap', { latitude, longitude });
+  };
 
   const GetShippingAddress = async (productId) => {
     try {
@@ -130,7 +138,7 @@ const MapRouteScreen = ({route}) => {
             <TouchableOpacity style={[mStyle.button]} onPress={() => { }}>
               <Text style={[mStyle.buttonText]}>Accept This Order</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { }}>
+            <TouchableOpacity  onPress={handleNavigateToSecondPage}>
               <Text style={styles.googleMapText}>Visit Google Map</Text>
             </TouchableOpacity>
           </View>

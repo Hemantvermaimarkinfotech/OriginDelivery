@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from "react-native-axios";
+import Loader from '../components/Loader';
 
 const TrackingScreen = ({navigation}) => {
   // const [tracking, setTracking] = useState(null);
   const [orderNumber, setOrderNumber] = useState('');
+  const [loading,setIsLoading]=useState(false)
 
   const GetTracking = async () => {
+    setIsLoading(true)
     try {
       const response = await axios.get(
         `https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/order/${orderNumber}`,
@@ -18,6 +21,7 @@ const TrackingScreen = ({navigation}) => {
       );
       console.log('Tracking', response.data);
       setOrderNumber(response.data);
+      setIsLoading(false)
       navigation.navigate("TrackingStatus", { id: response.data.id, trackingData: response.data });
     } catch (error) {
       Alert(error)
@@ -45,9 +49,12 @@ const TrackingScreen = ({navigation}) => {
           onChangeText={(text) => setOrderNumber(text)}
         />
         <View style={{marginTop: 20}} />
+       {loading?
+       <Loader/>:(
         <TouchableOpacity style={styleA.button} onPress={handleSubmission}>
-          <Text style={styleA.buttonText}>Submit</Text>
-        </TouchableOpacity>
+        <Text style={styleA.buttonText}>Submit</Text>
+      </TouchableOpacity>
+       )}
       </View>
     </View>
   );

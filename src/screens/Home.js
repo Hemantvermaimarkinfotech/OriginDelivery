@@ -31,7 +31,7 @@ const HomeScreen = ({navigation}) => {
  
       setOrdersData(response.data);
     } catch (error) {
-      console.log(error?.response, 'error');
+      // console.log(error?.response, 'error');
     } finally {
       setLoading(false);
     }

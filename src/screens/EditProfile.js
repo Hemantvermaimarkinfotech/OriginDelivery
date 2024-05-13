@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityInd
 import { AuthContext } from '../components/AuthProvider';
 import axios from "react-native-axios"
 import mStyle from '../../AppStyles';
+import Loader from '../components/Loader';
 
 const UpdateProfile = ({ navigation }) => {
   const { userToken } = useContext(AuthContext);
@@ -142,13 +143,14 @@ const UpdateProfile = ({ navigation }) => {
         placeholderTextColor={"#23233C"}
       color={"#23233C"}
       />
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <TouchableOpacity style={[mStyle.button, styles.button]} onPress={UpdateProfile}>
-          <Text style={mStyle.buttonText}>Update Profile</Text>
-        </TouchableOpacity>
-      )}
+    
+       {loading?
+       <Loader/>:(
+        <TouchableOpacity style={[mStyle.button,{width:"90%",marginVertical:20}]} onPress={UpdateProfile}>
+        <Text style={mStyle.buttonText}>Update Profile</Text>
+      </TouchableOpacity>
+       )}
+     
     </ScrollView>
   );
 };
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 8,
     marginTop: 20,
     width:"90%"
   },

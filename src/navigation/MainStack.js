@@ -28,6 +28,7 @@ import mStyle from '../../AppStyles';
 import MapRouteScreen from '../screens/MapRoute';
 import TitleHeader from '../components/TitleHeader';
 import EditProfile from '../screens/EditProfile';
+import GoogleMap from '../screens/GoogleMap';
 
 
 const Stack = createStackNavigator();
@@ -222,7 +223,7 @@ const CustomDrawerContent = ({ navigation }) => {
   return (
     <>
     <SafeAreaView style={{backgroundColor: colors.white}} />
-    <View style={{ flex: 1, marginHorizontal: 15 }}>
+    <View style={{ flex: 1, marginHorizontal: 15, marginTop:20}}>
       {/* Drawer Header */}
       <View style={mStyle.drawerHeaderContainer}>
         <TouchableOpacity onPress={() => navigation.closeDrawer()}>
@@ -341,6 +342,18 @@ const MainStack = () => {
           //     <Text style={{ color: 'black', fontSize: 20, fontWeight: '600' }}>Back</Text>
           //   </TouchableOpacity>
           // ),
+        }} />
+        <Stack.Screen name="GoogleMap" component={GoogleMap} 
+        options={{
+          title: '',
+          headerTransparent: true,
+          headerStyle: {
+            backgroundColor: 'transparent', // Change the background color
+          },
+          headerTitleStyle: {
+            color: '#fff', // Change the text color
+          },
+       
         }} />
 
       {/* <Stack.Screen name="BottomTabs" component={BottomTabsNavigator} options={{ headerShown: false }} />  */}

@@ -9,7 +9,9 @@ import { AuthContext } from '../components/AuthProvider';
 import ImagePaths from '../utils/ImagePaths';
 import mStyle from '../../AppStyles';
 import colors from '../utils/Colors';
-
+import Feather from "react-native-vector-icons/Feather"
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const LoginScreen = ({navigation}) => {
 
@@ -17,6 +19,15 @@ const LoginScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const {userToken, setUserToken} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    // Validate email using regular expression
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
+    setIsEmailValid(isValidEmail);
+  };
 
   const handleContinue = () => {
       navigation.replace('DrawerNavigator'); 
@@ -54,6 +65,10 @@ const LoginScreen = ({navigation}) => {
       alert(error?.response?.data?.error);
     }
   };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -72,19 +87,38 @@ const LoginScreen = ({navigation}) => {
 
       {/* Email and Password Input */}
       <View style={styles.inputContainer}>
+        <View style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}]}>
         <TextInput
           placeholderTextColor={"#23233C"}
-          placeholder="Email"  onChangeText={text=>setEmail(text)} 
-          style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0}]}
+          placeholder="Email"  
+          color={"#23233C"}
+          style={{flex:1}}
+          onChangeText={handleEmailChange}
         />
+          <TouchableOpacity>
+          {isEmailValid ? (
+            <AntDesign name="checkcircle" size={20} color="#6CC57C" />
+          ) : (
+            null
+          )}
+          
+          </TouchableOpacity>
+        </View>
+        
         <View style={{marginVertical: 10}} />
+        <View  style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}]}>
         <TextInput
-        placeholderTextColor={"#23233C"}
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={text=>setPassword(text)}
-          style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0}]}
-        />
+    placeholderTextColor={"#23233C"}
+    placeholder="Password"
+    secureTextEntry={!showPassword}
+    onChangeText={text=>setPassword(text)}
+    style={{width:"60%"}}
+    color={"#23233C"}
+  /> 
+  <TouchableOpacity onPress={togglePasswordVisibility}>
+    <Feather name={showPassword ? "eye-off" : "eye"} size={22} color={"#23233C"}/>
+  </TouchableOpacity>
+        </View>
 
         <TouchableOpacity style={{alignSelf: 'flex-end'}}>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
@@ -123,9 +157,9 @@ const LoginScreen = ({navigation}) => {
       </TouchableOpacity>
       </View>
       <View style={{marginVertical: 15}} />
-      <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
+      {/* <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
           <Text style={{fontSize: 18, fontWeight: '500', textDecorationLine: 'underline'}}>Skip</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={{marginVertical: 15}} />
     </ScrollView>
   );
