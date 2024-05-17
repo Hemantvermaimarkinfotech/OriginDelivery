@@ -45,7 +45,6 @@ import {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '45%',
       height: 55,
       backgroundColor: '#ffffff',
       elevation: 6,
@@ -53,7 +52,6 @@ import {
       borderWidth: 1,
       borderColor: '#30B0C9',
       alignSelf: 'center',
-      marginVertical: 15,
     },
     primaryBtnTxt: {
       fontSize: 18,

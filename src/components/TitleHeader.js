@@ -21,7 +21,7 @@ const TitleHeader = ({ title, navigation }) => {
       </TouchableOpacity>
 
       <View style={{flexDirection :'row', justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={[styles.title, {fontWeight: '600'}]}>{title}</Text>
+        <Text style={[styles.title, {fontWeight: '700'}]}>{title}</Text>
       </View>
     </View>
 
@@ -70,9 +70,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '400',
-    color: colors.black, // Title color
-    letterSpacing: 1
+    color: colors.secondary, // Title color
+    letterSpacing: 1,
+    fontFamily:"Montserrat, Bold"
   }
 });
 

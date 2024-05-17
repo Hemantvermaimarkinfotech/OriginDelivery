@@ -15,6 +15,8 @@ const AuthProvider = ({children}) => {
       // Error retrieving data
     }
   };
+
+
   useEffect(() => {
     getToken();
   }, []);
@@ -25,7 +27,8 @@ const AuthProvider = ({children}) => {
           userData,
           setUserData,
           userToken,
-          setUserToken
+          setUserToken,
+        
         }}>
         {children}
       </AuthContext.Provider>

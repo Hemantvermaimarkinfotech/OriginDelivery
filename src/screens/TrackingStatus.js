@@ -1,33 +1,27 @@
-import React, { useState, useEffect,useContext }from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../components/AuthProvider';
 import mStyle from '../../AppStyles';
+import axios from "react-native-axios"
+import Loader from '../components/Loader';
 
 
-const TrackingStatusScreen = ({route}) => {
+const TrackingStatusScreen = ({ route }) => {
   const { id, trackingData } = route.params;
-console.log("trackingData",trackingData)
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-      {label: 'Dispatched', value: 'dispatched'},
-      {label: 'Picked up', value: 'pickedup'},
-      {label: 'Delivered', value: 'delivered'},
+    { label: 'Dispatched', value: 'accepted' },
+    { label: 'Picked up', value: 'pickedup' },
+    { label: 'Delivered', value: 'completed' },
   ]);
-  const [loading,setLoading]=useState(false)
-  const {userToken}=useContext(AuthContext)
-
+  const [loading, setLoading] = useState(false);
+  const [updatedStatus, setUpdatedStatus] = useState(trackingData?.status);
+  const { userToken, updateUserToken } = useContext(AuthContext);
 
   const updateOrderStatus = async () => {
-    // console.log("tokn",userToken?.token)
-
-    // console.log(`https://staging11.originmattress.com.sg/wp-json/woocommerce/v1/update-order-status/${trackingData.id}/${value)`);
-    console.log(`https://staging11.originmattress.com.sg/wp-json/woocommerce/v1/update-order-status/${trackingData.id}/${value}`);
-
     setLoading(true);
-
     try {
       const response = await axios.post(
         `https://staging11.originmattress.com.sg/wp-json/woocommerce/v1/update-order-status/${trackingData.id}/${value}`,
@@ -35,63 +29,77 @@ console.log("trackingData",trackingData)
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userToken?.token}`
+            Authorization: `Bearer ${userToken?.token}`,
           },
-        },
+        }
       );
-      console.log('OrderStaus-Update response:', response.data); 
-      setUserToken(response?.data);
-      await AsyncStorage.setItem('userData', JSON.stringify(response?.data));
+      if (response.data) {
+        console.log('Success', response.data);
+        // Update value state with the new status
+        setValue(response.data.status);
+        // Update the status displayed on the UI
+        setUpdatedStatus(response.data.status);
+        console.log('tryyy',response.data)
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error?.response);
-      alert(error?.response?.data?.error);
+      console.log(error);
     }
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-       
-      <View style={{marginTop: 20}} />
+    <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      <View style={{ marginTop: 20 }} />
 
-      <View style={{marginHorizontal: 15}}>
+      <View style={{ marginHorizontal: 15 }}>
         <Text style={styleA.label}>{trackingData.products[0]?.name}</Text>
         <Text style={styleA.subLabel}>Order No. {trackingData?.id}</Text>
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-         <View style={{ backgroundColor: '#30B0C9', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 }}>
-           <Text style={{ color: 'white', fontWeight: '600' }}>Status: {trackingData?.status}</Text>
-         </View>
+          <View
+            style={{
+              backgroundColor: '#30B0C9',
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 6,
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: '600' }}>
+              Status: {updatedStatus}
+            </Text>
+          </View>
         </View>
-        <View style={{marginTop: 20}} />
-
+        <View style={{ marginTop: 20 }} />
 
         <DropDownPicker
-                open={open}
-                value={value}
-                items={items}
-                setOpen={setOpen}
-                setValue={setValue}
-                setItems={setItems}
-                placeholder={'Select Status'}
-                onChangeItem={(item) => updateOrderStatus(item.value)}
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          placeholder={'Select Status'}
+          onChangeItem={(item) => setValue(item.value)}
         />
-        <View style={{marginTop: 20}} />
-         
+        <View style={{ marginTop: 20 }} />
 
-        <TouchableOpacity style={[mStyle.button]} onPress={() => updateOrderStatus(value)}>
+        {loading ? (
+          <Loader />
+        ) : (
+          <TouchableOpacity
+            style={[mStyle.button]}
+            onPress={() => updateOrderStatus(value)}
+          >
             <Text style={[mStyle.buttonText]}>Update</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        )}
       </View>
-  
     </View>
   );
 };
 
-
 const styleA = StyleSheet.create({
-
   label: {
     fontSize: 20,
     fontWeight: '600',
@@ -103,15 +111,6 @@ const styleA = StyleSheet.create({
     marginBottom: 5,
     color: '#888888'
   },
-  input: {
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 10,
-  },
 });
-
 
 export default TrackingStatusScreen;

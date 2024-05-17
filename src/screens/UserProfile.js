@@ -4,6 +4,7 @@ import mStyle from '../../AppStyles';
 import { AuthContext } from '../components/AuthProvider';
 import axios from 'react-native-axios'; // Importing axios properly
 import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused hook
+import colors from '../utils/Colors';
 
 const UserProfileScreen = ({ navigation }) => {
   const { userToken } = useContext(AuthContext);
@@ -51,14 +52,15 @@ const UserProfileScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       {profile && (
         <View style={styles.profileContainer}>
-          <Text style={styles.label}>Name:</Text>
-          <Text style={styles.text}>{profile.user_name}</Text>
+          <Text style={styles.label}>Full Name:</Text>
+          <Text style={styles.text}>{profile.user_full_name}</Text>
+          <Text style={styles.label}>Surname:</Text>
+          <Text style={styles.text}>{profile.delivery_man_surname}</Text>
 
           <Text style={styles.label}>Email:</Text>
           <Text style={styles.text}>{profile.email}</Text>
 
-          <Text style={styles.label}>Surname:</Text>
-          <Text style={styles.text}>{profile.delivery_man_surname}</Text>
+       
 
           <Text style={styles.label}>Phone Number:</Text>
           <Text style={styles.text}>{profile.delivery_man_phone}</Text>
@@ -77,9 +79,10 @@ const UserProfileScreen = ({ navigation }) => {
 
           <Text style={styles.label}>Work Address:</Text>
           <Text style={styles.text}>{profile.delivery_man_work_address}</Text>
+        
 
           <TouchableOpacity
-            style={[mStyle.button, styles.button]}
+            style={[mStyle.button, styles.button,{marginBottom:100}]}
             onPress={() => navigation.navigate('EditProfile')}>
             <Text style={mStyle.buttonText}>Edit</Text>
           </TouchableOpacity>
@@ -99,14 +102,16 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 17,
-    fontWeight: '500',
-    color: '#747474',
+    fontWeight: '600',
+    color: '#23233C',
     marginBottom: 6,
+    fontFamily:"Montserrat, Regular"
   },
   text: {
     fontSize: 18,
     fontWeight: '500',
     marginBottom: 20,
+    color:colors.secondary
   },
   button: {
     marginTop: 20,

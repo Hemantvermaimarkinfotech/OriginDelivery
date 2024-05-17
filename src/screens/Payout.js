@@ -146,6 +146,7 @@ const styleA = StyleSheet.create({
     flexDirection: 'row', // Arrange children horizontally
     marginHorizontal: 20,
     justifyContent: 'space-between',
+    backgroundColor:"#FFFFFF"
   },
   column: {
     // flex: 1, // Each column takes an equal amount of space
@@ -154,8 +155,9 @@ const styleA = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: '#000000',
+    color: '#23233C',
     fontWeight: '500',
+ 
   },
   subtitle: {
     fontSize: 16,

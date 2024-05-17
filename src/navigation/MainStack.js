@@ -85,9 +85,15 @@ const BottomTabsNavigator = ({ navigation }) => (
           shadowColor: colors.shadowColor, // Add shadow color
           shadowOpacity: 0.25, // Adjust shadow opacity as needed
           shadowRadius: 2, // Adjust shadow radius as needed
-          elevation: 5, // Android only, adjust elevation as needed
+          elevation: 5,
+          height:70,
+          // borderTopLeftRadius: 25, // Adjusted to borderTopLeftRadius
+          // borderTopRightRadius: 25, // Adjusted to borderTopRightRadius// Android only, adjust elevation as needed
         },
       }}>
+
+
+
 
       <Tab.Screen name="Home" component={HomeStack}
         options={{
@@ -302,14 +308,14 @@ const MainStack = () => {
           header: () => <TitleHeader title="Profile" navigation={navigation} />, 
         }}/>
          <Stack.Screen name="EditProfile" component={EditProfile} options={{
-          title: 'EditProfile',
+          title: 'Edit Profile',
           headerStyle: {
             backgroundColor: '#30B0C9', // Change the background color
           },
           headerTitleStyle: {
             color: '#fff', // Change the text color
           },
-          header: () => <TitleHeader title="EditProfile" navigation={navigation} />, 
+          header: () => <TitleHeader title="Edit Profile" navigation={navigation} />, 
         }} />
            <Stack.Screen name="TrackingStatus" component={TrackingStatusScreen} options={{
           title: 'Tracking',

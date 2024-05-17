@@ -1,6 +1,6 @@
 // src/screens/LoginScreen.js
 import React, {useState,useContext} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , Platform, ScrollView} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image , Platform, ScrollView,SafeAreaView} from 'react-native';
 import { FloatingLabelInput } from 'react-native-floating-label-input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "react-native-axios"
@@ -12,6 +12,7 @@ import colors from '../utils/Colors';
 import Feather from "react-native-vector-icons/Feather"
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 const LoginScreen = ({navigation}) => {
 
@@ -30,7 +31,7 @@ const LoginScreen = ({navigation}) => {
   };
 
   const handleContinue = () => {
-      navigation.replace('DrawerNavigator'); 
+      navigation.navigate('Home'); 
   };
 
   const navigateToSignUp = () => {
@@ -71,7 +72,7 @@ const LoginScreen = ({navigation}) => {
 
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Title and Logo */}
       <View style={styles.topContainer}>
         <Text style={styles.title}>Log in</Text>
@@ -87,7 +88,7 @@ const LoginScreen = ({navigation}) => {
 
       {/* Email and Password Input */}
       <View style={styles.inputContainer}>
-        <View style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}]}>
+        <View style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
         <TextInput
           placeholderTextColor={"#23233C"}
           placeholder="Email"  
@@ -130,20 +131,10 @@ const LoginScreen = ({navigation}) => {
       {/* Submit Button */}
     {loading?
     <Loader/>:(
-      <TouchableOpacity style={[mStyle.button, styles.shadow,]} onPress={handleLogin}>
+      <TouchableOpacity style={[mStyle.button, styles.shadow,{marginHorizontal:20}]} onPress={handleLogin}>
       <Text style={mStyle.buttonText}>Login</Text>
     </TouchableOpacity>
     )}
-
-
-
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 25}}>
-          <Text style={{fontWeight: '400', fontSize: 15}}>Don't have an account? </Text>
-          <TouchableOpacity onPress={navigateToSignUp}>
-            <Text style={{fontWeight: '600', fontSize: 15}}>Sign up</Text>
-          </TouchableOpacity>
-       
-      </View>
 
       <View style={{marginVertical: 15}} />
       {/* Signup and Social Media Buttons */}
@@ -157,11 +148,11 @@ const LoginScreen = ({navigation}) => {
       </TouchableOpacity>
       </View>
       <View style={{marginVertical: 15}} />
-      {/* <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
+      <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
           <Text style={{fontSize: 18, fontWeight: '500', textDecorationLine: 'underline'}}>Skip</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       <View style={{marginVertical: 15}} />
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -188,6 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 10,
+    color:colors.secondary
   },
   logo: {
     width: 220,
@@ -195,6 +187,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: 50,
+    marginHorizontal:20
   },
   shadow: {
     ...Platform.select({

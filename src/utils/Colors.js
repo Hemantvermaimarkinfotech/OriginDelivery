@@ -14,7 +14,6 @@ const colors = {
   textDark: '#000000',
   white: '#FFFFFF',
   black: '#000000',
-
   lightT: '#888888',
   darkT: '#363636',
 };

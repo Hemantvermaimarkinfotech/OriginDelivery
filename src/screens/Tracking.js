@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from "react-native-axios";
 import Loader from '../components/Loader';
+import colors from '../utils/Colors';
 
 const TrackingScreen = ({navigation}) => {
   // const [tracking, setTracking] = useState(null);
@@ -9,7 +10,7 @@ const TrackingScreen = ({navigation}) => {
   const [loading,setIsLoading]=useState(false)
 
   const GetTracking = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `https://staging11.originmattress.com.sg/wp-json/delivery_man/v1/order/${orderNumber}`,
@@ -20,22 +21,29 @@ const TrackingScreen = ({navigation}) => {
         }
       );
       console.log('Tracking', response.data);
-      setOrderNumber(response.data);
-      setIsLoading(false)
       navigation.navigate("TrackingStatus", { id: response.data.id, trackingData: response.data });
     } catch (error) {
-      Alert(error)
+      Alert.alert('Error', error.message);
       console.error('Error:', error);
-      setOrderNumber(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSubmission = () => {
-    // Handle the submission logic here
+    if (!orderNumber) {
+      Alert.alert('Error', 'Please enter an order number.');
+      return;
+    }
     console.log('Order Number submitted:', orderNumber);
-    // Call the function to get tracking information
     GetTracking();
   };
+
+  useEffect(() => {
+    setIsLoading(false); // Reset loading state when orderNumber changes
+  }, [orderNumber]);
+  
+  
 
   return (
     <View style={{flex: 1, backgroundColor: '#ffffff'}}>
@@ -46,7 +54,9 @@ const TrackingScreen = ({navigation}) => {
           style={styleA.input}
           placeholder="Order number..."
           value={orderNumber}
-          onChangeText={(text) => setOrderNumber(text)}
+
+          onChangeText={(text) => {console.log(text);setOrderNumber(text)}}
+       
         />
         <View style={{marginTop: 20}} />
        {loading?
@@ -65,6 +75,7 @@ const styleA = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 10,
+    color:colors.secondary
   },
   input: {
     fontSize: 16,

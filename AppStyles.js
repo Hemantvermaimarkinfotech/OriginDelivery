@@ -120,6 +120,7 @@ const mStyle = StyleSheet.create({
     drawerText: {
       fontSize: 18,
       fontWeight: 500,
+      color:"#23233C"
     },
     drawerIconView: {
       marginLeft: 10,
