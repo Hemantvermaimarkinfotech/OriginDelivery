@@ -185,7 +185,7 @@
 // export default UpdateProfile;
 
 // src/screens/LoginScreen.js
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useEffect} from 'react';
 import {
   View,
   Text,
@@ -211,29 +211,36 @@ import axios from 'react-native-axios';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Loader from '../components/Loader';
 
-const UpdateProfile = ({navigation}) => {
-  const [firstName, setFirstName] = useState('');
-  const [email, setEmail] = useState('');
-  const [surName, setSurName] = useState('');
-  const [number, setNumber] = useState('');
-  const [age, setAge] = useState('');
-  const [userName, setUserName]=useState('')
-  const [Iban, setIban]=useState('')
-  const [workdaddress, setWorkAddress] = useState('');
-  const [homeaddress, setHomeAddress] = useState('');
+const UpdateProfile = ({navigation,route}) => {
+  const { profile } = route.params;
+  console.log("Profile",profile)
+ 
+  const [firstName, setFirstName] = useState(profile?.user_full_name || '');
+  const [email, setEmail] = useState(profile?.email || '');
+  const [surName, setSurName] = useState(profile?.delivery_man_surname || '');
+  const [number, setNumber] = useState(profile?.delivery_man_phone || '');
+  const [age, setAge] = useState(profile?.delivery_man_age || '');
+  const [userName, setUserName] = useState(profile?.user_name || '');
+  const [Iban, setIban] = useState(profile?.delivery_man_iban || '');
+  const [workdaddress, setWorkAddress] = useState(profile?.delivery_man_work_address || '');
+  const [homeaddress, setHomeAddress] = useState(profile?.delivery_man_home_address || '');
   const [isVisible, setIsVisible] = useState(false);
-  const [openDatePicker, setOpenDatePicker] = useState(false); // State for Date Picker modal
-  const [date, setDate] = useState(new Date()); // State for Date Picker
-  const {userToken} = useContext(AuthContext);
+  const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const { userToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-  const [userFullName, setUserFullName] = useState('');
+  const [userFullName, setUserFullName] = useState(profile?.user_full_name || '');
   const [opengender, setOpenGender] = useState(false);
-  const [gendervalue, setGenderValue] = useState(null);
+  const [gendervalue, setGenderValue] = useState(profile?.delivery_man_gender || null);
   const [genderitems, setGenderItems] = useState([
-    {label: 'Male', value: 'KingSize'},
-    {label: 'Female', value: 'QueenSize'},
-    {label: 'Other', value: 'NormalSize'},
+    { label: 'Male', value: 'Male' },
+    { label: 'Female', value: 'Female' },
+    { label: 'Other', value: 'Other' },
   ]);
+
+  useEffect(() => {
+    console.log('Profile data received:', profile);
+  }, [profile]);
 
   const toggleModal = () => {
     setIsVisible(!isVisible);

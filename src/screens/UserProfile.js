@@ -83,7 +83,7 @@ const UserProfileScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={[mStyle.button, styles.button,{marginBottom:100}]}
-            onPress={() => navigation.navigate('EditProfile')}>
+            onPress={() => navigation.navigate('EditProfile', { profile })}>
             <Text style={mStyle.buttonText}>Edit</Text>
           </TouchableOpacity>
         </View>
@@ -105,13 +105,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#23233C',
     marginBottom: 6,
-    fontFamily:"Montserrat, Regular"
+    fontFamily:"Montserrat-Regular"
   },
   text: {
     fontSize: 18,
     fontWeight: '500',
     marginBottom: 20,
-    color:colors.secondary
+    color:colors.secondary,
+    
   },
   button: {
     marginTop: 20,

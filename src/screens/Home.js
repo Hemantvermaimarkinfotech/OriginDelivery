@@ -35,17 +35,18 @@ const HomeScreen = ({navigation}) => {
           },
         },
       );
-        console.log("name",response.data.products[0].name)
-      if (response.data.length === 0) {
+        console.log("name",response?.data)
+      if (response?.data?.length === 0) {
         setOrdersData([]);
       } else {
-        setOrdersData(response.data);
+        setOrdersData(response?.data);
       }
       console.log(
         'Number of keys in response:',
-        Object.keys(response.data).length,
+        Object.keys(response?.data)?.length,
       );
     } catch (error) {
+      console.log("this is catch error of undelivered data: ",error)
     } finally {
       setLoading(false);
     }
@@ -198,10 +199,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
-    fontWeight: '600',
-    fontSize: 14,
+    // fontWeight: '600',
+    fontSize: 17,
     marginBottom: 4,
-    color:colors.secondary
+    color:colors.secondary,
+    fontFamily:"Montserrat-SemiBold"
   },
   productPrice: {
     fontWeight: '600',

@@ -107,7 +107,7 @@ const LoginScreen = ({navigation}) => {
         </View>
         
         <View style={{marginVertical: 10}} />
-        <View  style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}]}>
+        <View  style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
         <TextInput
     placeholderTextColor={"#23233C"}
     placeholder="Password"
@@ -127,16 +127,16 @@ const LoginScreen = ({navigation}) => {
         <View style={{marginVertical: 10}} />
       </View>
 
-      <View style={{marginVertical: 10}} />
+      <View style={{marginVertical: "3%"}} />
       {/* Submit Button */}
     {loading?
     <Loader/>:(
-      <TouchableOpacity style={[mStyle.button, styles.shadow,{marginHorizontal:20}]} onPress={handleLogin}>
+      <TouchableOpacity style={[mStyle.button, styles.shadow]} onPress={handleLogin}>
       <Text style={mStyle.buttonText}>Login</Text>
     </TouchableOpacity>
     )}
 
-      <View style={{marginVertical: 15}} />
+      <View style={{marginVertical: 10}} />
       {/* Signup and Social Media Buttons */}
 
       <View style={styles.socialButtonsContainer}>
@@ -147,7 +147,7 @@ const LoginScreen = ({navigation}) => {
         <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30}]}>G</Text>
       </TouchableOpacity>
       </View>
-      <View style={{marginVertical: 15}} />
+      <View style={{marginVertical: 20}} />
       <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
           <Text style={{fontSize: 18, fontWeight: '500', textDecorationLine: 'underline'}}>Skip</Text>
       </TouchableOpacity>
@@ -159,14 +159,14 @@ const LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    marginHorizontal: 20,
     // justifyContent: 'center',
     backgroundColor: '#F4F5FA',
   },
   topContainer: {
     alignItems: 'center',
-    marginTop: '20%',
-    marginBottom: '30%',
+    marginTop: '5%',
+    marginBottom: '25%',
   },
   logoContainer: {
     alignItems: 'center',
@@ -186,8 +186,9 @@ const styles = StyleSheet.create({
     height: 55,
   },
   inputContainer: {
-    marginTop: 50,
-    marginHorizontal:20
+    marginTop: "20%",
+    // borderWidth:1
+    // marginHorizontal:20
   },
   shadow: {
     ...Platform.select({

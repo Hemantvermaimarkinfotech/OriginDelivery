@@ -68,6 +68,7 @@ const MapRouteScreen = ({route,navigation}) => {
           Geolocation.getCurrentPosition(
             position => {
               setLocation(position.coords);
+              
             },
             error => console.log(error.message),
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },

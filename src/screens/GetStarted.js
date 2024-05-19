@@ -98,20 +98,22 @@ const styles = StyleSheet.create({
   },
   slideContent: {
     alignItems: 'center',
-    paddingVertical: 20,
+    // paddingVertical: 20,
     paddingHorizontal: 40,
   },
   title: {
     fontSize: 30,
     letterSpacing: 0.6,
     fontWeight: '800',
-    marginBottom: 12,
+    // marginBottom: 12,
     textAlign: 'center',
-    color:colors.secondary
+    color:colors.secondary,
+   
   },
   description: {
     fontSize: 16,
     textAlign: 'center',
+   
   },
   button: {
     backgroundColor: '#007BFF',

@@ -87,7 +87,7 @@ const PayoutScreen = () => {
         </View>
         <View style={styleA.column}>
           <Text style={styleA.title}>Date</Text>
-          <Text numberOfLines={1} style={styleA.subtitle}>{item?.completed_date}</Text>
+          <Text  style={styleA.subtitle}>{item?.completed_date}</Text>
         </View>
         <View style={styleA.column}>
           <Text style={styleA.title}>Commission</Text>

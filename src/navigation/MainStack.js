@@ -75,7 +75,7 @@ const SettingsStack = () => (
 
 const BottomTabsNavigator = ({ navigation }) => (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeStack"
       screenOptions={{
         tabBarActiveTintColor: colors.blue,
         tabBarInactiveTintColor: colors.darkGrey,
@@ -95,7 +95,7 @@ const BottomTabsNavigator = ({ navigation }) => (
 
 
 
-      <Tab.Screen name="Home" component={HomeStack}
+      <Tab.Screen name="HomeStack" component={HomeStack}
         options={{
           tabBarIcon: ({focused}) => (
             <View style={{alignItems: 'center', justifyContent: 'center'}}>

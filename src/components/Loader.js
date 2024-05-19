@@ -21,7 +21,7 @@ import {
         style={[
           styles.primaryBtn,
           {
-            width: width ? width : '90%',
+            width: width ? width : '100%',
             backgroundColor: backgroundColor ? backgroundColor : '#fff',
             borderWidth: borderWidth ? borderWidth : 1,
             ...rest,
