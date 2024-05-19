@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     borderColor: '#DEDEDE',
     borderRadius: scale(5),
     fontSize: scale(16),
-    fontFamily: FontName.Regular,
+    fontFamily: FontName.Regular, 
     color: colors.black,
     padding: scale(10),
     minHeight: scale(54),
