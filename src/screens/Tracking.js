@@ -32,7 +32,7 @@ const TrackingScreen = ({navigation}) => {
 
   const handleSubmission = () => {
     if (!orderNumber) {
-      Alert.alert('Error', 'Please enter an order number.');
+      
       return;
     }
     console.log('Order Number submitted:', orderNumber);
@@ -54,7 +54,8 @@ const TrackingScreen = ({navigation}) => {
           style={styleA.input}
           placeholder="Order number..."
           value={orderNumber}
-
+  
+placeholderTextColor={"#23233C"}
           onChangeText={(text) => {console.log(text);setOrderNumber(text)}}
        
         />
@@ -75,7 +76,8 @@ const styleA = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 10,
-    color:colors.secondary
+    color:colors.secondary,
+    fontFamily:"Montserrat-SemiBold"
   },
   input: {
     fontSize: 16,
@@ -84,6 +86,10 @@ const styleA = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginBottom: 10,
+    color:"#23233C",
+    fontSize:16,
+    fontFamily:"Montserrat-SemiBold",
+    opacity:0.6
   },
   button: {
     backgroundColor: '#30B0C9',
@@ -93,8 +99,8 @@ const styleA = StyleSheet.create({
   },
   buttonText: {
     color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontFamily:"Montserrat-Bold"
   },
 });
 

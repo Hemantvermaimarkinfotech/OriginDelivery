@@ -122,6 +122,13 @@
 		<string>Montserrat-Thin.ttf</string>
 		<string>Montserrat-ThinItalic.ttf</string>
 		<string>ProtestRiot-Regular.ttf</string>
+		<string>ArialCE.ttf</string>
+		<string>ArialCEBoldItalic.ttf</string>
+		<string>ArialCEItalic.ttf</string>
+		<string>ArialCEMTBlack.ttf</string>
+		<string>ArialMdm.ttf</string>
+		<string>ArialMdmItl.ttf</string>
+		<string>arialceb.ttf</string>
 	</array>
 </dict>
 </plist>

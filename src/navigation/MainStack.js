@@ -260,7 +260,7 @@ const CustomDrawerContent = ({ navigation }) => {
       </TouchableOpacity>
 
       <TouchableOpacity style={mStyle.drawerButton} onPress={() => logout()}>
-        <View style={mStyle.drawerIconView}><Image source={ImagePaths.logoutIcon} style={mStyle.drawerIcon} /></View>
+        <View style={mStyle.drawerIconView}><Image source={ImagePaths.logoutIcon} style={[mStyle.drawerIcon,{height:22,width:22}]} /></View>
         <Text style={[mStyle.drawerText]}>Logout</Text>
       </TouchableOpacity>
     </View>

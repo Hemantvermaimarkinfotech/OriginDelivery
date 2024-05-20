@@ -26,7 +26,7 @@ const mStyle = StyleSheet.create({
       justifyContent:'center'
     },
     buttonText: {
-      color: 'white',
+      color: '#FFFFFF',
       fontSize: 20,
       fontWeight: 'bold',
       letterSpacing: 0.8,
@@ -118,9 +118,10 @@ const mStyle = StyleSheet.create({
       // borderWidth: 1
     },
     drawerText: {
-      fontSize: 18,
-      fontWeight: 500,
-      color:"#23233C"
+      fontSize: 20,
+      fontWeight: 600,
+      color:"#23233C",
+      fontFamily:"Montserrat-Medium"
     },
     drawerIconView: {
       marginLeft: 10,

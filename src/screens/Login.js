@@ -18,34 +18,69 @@ const LoginScreen = ({navigation}) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {userToken, setUserToken} = useContext(AuthContext);
+  const { setUserToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const handleEmailChange = (text) => {
     setEmail(text);
     // Validate email using regular expression
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
     setIsEmailValid(isValidEmail);
+    // Set error message if email is invalid
+    if (!text.trim()) {
+      setEmailError('Please enter your email.');
+    } else if (!isValidEmail) {
+      setEmailError('Please enter a valid email.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    // Set error message if password is empty
+    if (!text.trim()) {
+      setPasswordError('Please enter your password.');
+    } else {
+      setPasswordError('');
+    }
   };
 
   const handleContinue = () => {
-      navigation.navigate('Home'); 
-  };
-
-  const navigateToSignUp = () => {
-    navigation.navigate('SignUp'); // Assuming 'SignUp' is the name of your SignUp screen
+    navigation.navigate('Home');
   };
 
   const handleLogin = async () => {
+    let valid = true;
+
+    if (!email.trim()) {
+      setEmailError('Please enter your email.');
+      valid = false;
+    } else if (!isEmailValid) {
+      setEmailError('Please enter a valid email.');
+      valid = false;
+    }
+
+    if (!password.trim()) {
+      setPasswordError('Please enter your password.');
+      valid = false;
+    }
+
+    if (!valid) {
+      return;
+    }
 
     setLoading(true);
-  
-    let Data = JSON.stringify({
+
+    const Data = JSON.stringify({
       Email: `${email}`,
       password: `${password}`,
     });
+
     try {
       const response = await axios.post(
         'https://staging11.originmattress.com.sg/wp-json/custom/v1/login',
@@ -56,20 +91,19 @@ const LoginScreen = ({navigation}) => {
           },
         },
       );
-      console.log('Login response:', response.data); 
+      console.log('Login response:', response.data);
       setUserToken(response?.data);
       await AsyncStorage.setItem('userData', JSON.stringify(response?.data));
       setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log(error?.response);
-      alert(error?.response?.data?.error);
     }
   };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,12 +122,13 @@ const LoginScreen = ({navigation}) => {
 
       {/* Email and Password Input */}
       <View style={styles.inputContainer}>
-        <View style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
+       <View style={{height:90}}>
+       <View style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
         <TextInput
           placeholderTextColor={"#23233C"}
           placeholder="Email"  
           color={"#23233C"}
-          style={{flex:1}}
+          style={{width:"80%",opacity:0.6,fontFamily:"Montserrat-SemiBold",fontSize:12}}
           onChangeText={handleEmailChange}
         />
           <TouchableOpacity>
@@ -104,26 +139,36 @@ const LoginScreen = ({navigation}) => {
           )}
           
           </TouchableOpacity>
+         
         </View>
+        {emailError ? <Text style={{ color: 'red', marginLeft: 20,fontSize:13 }}>{emailError}</Text> : null}
+       </View>
+       
         
-        <View style={{marginVertical: 10}} />
-        <View  style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
+        
+     <View style={{height:90}}>
+     <View  style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
         <TextInput
     placeholderTextColor={"#23233C"}
     placeholder="Password"
     secureTextEntry={!showPassword}
-    onChangeText={text=>setPassword(text)}
-    style={{width:"60%"}}
+    onChangeText={handlePasswordChange}
+    style={{width:"60%",opacity:0.6,fontFamily:"Montserrat-SemiBold",fontSize:12}}
     color={"#23233C"}
   /> 
   <TouchableOpacity onPress={togglePasswordVisibility}>
     <Feather name={showPassword ? "eye-off" : "eye"} size={22} color={"#23233C"}/>
   </TouchableOpacity>
-        </View>
 
-        <TouchableOpacity style={{alignSelf: 'flex-end'}}>
+
+        </View>
+        {passwordError ? <Text style={{ color: 'red', marginLeft: 20 ,fontSize:13,}}>{passwordError}</Text> : null}
+        <TouchableOpacity style={{alignSelf: 'flex-end',position:"absolute",bottom:0,fontSize:16,color:"#000000",fontFamily:"Montserrat-SemiBold"}}>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
+     </View>
+
+      
         <View style={{marginVertical: 10}} />
       </View>
 
@@ -141,16 +186,17 @@ const LoginScreen = ({navigation}) => {
 
       <View style={styles.socialButtonsContainer}>
       <TouchableOpacity style={[mStyle.button, {width: 80, backgroundColor: colors.white}]}>
-        <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30}]}>f</Text>
+        <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30,color:"#0F279E"}]}>f</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[mStyle.button, {width: 80, backgroundColor: colors.white}]}>
-        <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30}]}>G</Text>
+        {/* <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30,color:"#4285F4"}]}>G</Text> */}
+        <Image source={require('../assets/images/google.png')}/>
       </TouchableOpacity>
       </View>
       <View style={{marginVertical: 20}} />
-      <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
+      {/* <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
           <Text style={{fontSize: 18, fontWeight: '500', textDecorationLine: 'underline'}}>Skip</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={{marginVertical: 15}} />
     </SafeAreaView>
   );
@@ -177,9 +223,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    fontWeight: 'bold',
     marginBottom: 10,
-    color:colors.secondary
+    color:colors.secondary,
+    fontFamily:"Montserrat-Bold"
   },
   logo: {
     width: 220,
@@ -187,8 +233,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: "20%",
-    // borderWidth:1
-    // marginHorizontal:20
+  
   },
   shadow: {
     ...Platform.select({
@@ -232,7 +277,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    marginTop:20
   },
 
 

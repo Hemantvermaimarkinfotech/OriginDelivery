@@ -101,17 +101,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   label: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#23233C',
+    color: '#747474',
     marginBottom: 6,
-    fontFamily:"Montserrat-Regular"
+    fontFamily:"Arial-Regular"
   },
   text: {
-    fontSize: 18,
-    fontWeight: '500',
+    fontSize: 19,
+    fontWeight: '600',
     marginBottom: 20,
     color:colors.secondary,
+    fontFamily:"Arial-Regular"
     
   },
   button: {

@@ -9,6 +9,7 @@ import Loader from '../components/Loader';
 
 const TrackingStatusScreen = ({ route }) => {
   const { id, trackingData } = route.params;
+  console.log("id, trackingData ",id, trackingData )
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -65,7 +66,7 @@ const TrackingStatusScreen = ({ route }) => {
               borderRadius: 6,
             }}
           >
-            <Text style={{ color: 'white', fontWeight: '600' }}>
+            <Text style={{ color: '#FFFFFF', fontWeight: '600',fontSize:14,fontFamily:'Montserrat-Medium'}}>
               Status: {updatedStatus}
             </Text>
           </View>
@@ -81,8 +82,35 @@ const TrackingStatusScreen = ({ route }) => {
           setItems={setItems}
           placeholder={'Select Status'}
           onChangeItem={(item) => setValue(item.value)}
+          style={{
+            borderColor: '#DEDEDE', // Change '#000' to the desired color value
+            borderWidth: 1.2, // Optional: You can adjust the border width as needed
+            borderRadius: 5,
+            color:"#888888" // Optional: You can adjust the border radius as needed
+          }}
+          placeholderStyle={{
+            color: '#888888',
+            fontSize:14,
+            fontFamily:"Montserrat-Medium" // Change 'red' to the desired color value
+          }}
+          arrowIconStyle={{
+            tintColor: '#1E84B3', 
+            height:26,
+            width:26// Change 'red' to the desired color value
+          }}
+          dropDownContainerStyle={{
+            borderWidth:1.2,
+            borderColor:"#DEDEDE",
+          
+          }}
+          listItemLabelStyle={{
+            color: '#888888', // Text color of the dropdown items
+            fontSize: 14, // Adjust as needed
+            fontFamily: 'Montserrat-Medium', // Adjust as needed
+          }}
+        
         />
-        <View style={{ marginTop: 20 }} />
+        <View style={{ marginTop: 20 ,}} />
 
         {loading ? (
           <Loader />
@@ -91,7 +119,7 @@ const TrackingStatusScreen = ({ route }) => {
             style={[mStyle.button]}
             onPress={() => updateOrderStatus(value)}
           >
-            <Text style={[mStyle.buttonText]}>Update</Text>
+            <Text style={[mStyle.buttonText,{fontFamily:"Montserrat-Bold"}]}>Update</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -104,12 +132,15 @@ const styleA = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 12,
+    color:"#000000",
+    fontFamily:"Montserrat-SemiBold"
   },
   subLabel: {
     fontSize: 15,
     fontWeight: '600',
     marginBottom: 5,
-    color: '#888888'
+    color: '#888888',
+    fontFamily:"Montserrat-Medium"
   },
 });
 

@@ -36,7 +36,8 @@ const MapRouteScreen = ({route,navigation}) => {
         }
       );
       console.log('Shipping Address:', response.data); 
-      setAddress(response.data); 
+      const formattedAddress = response.data.shipping_address.replace(/<br\s*\/?>/gi, '\n');
+      setAddress({ ...response.data, shipping_address: formattedAddress });
     } catch (error) {
       console.error('Error fetching Shipping Address:', error);
       setAddress(null);
@@ -47,7 +48,8 @@ const MapRouteScreen = ({route,navigation}) => {
 
   useEffect(() => {
     GetShippingAddress(productId); 
-  }, [productId]); 
+  }, [productId]);
+
 
   useEffect(() => {
     // Request permission to access location
@@ -126,9 +128,11 @@ const MapRouteScreen = ({route,navigation}) => {
                 <Text style={styles.infoSubTitle}>Girls’ Home, 1 Defu Ave 1, Singapore</Text>
                 <Text style={styles.infoSubTitle}><Text style={{ fontWeight: 600, color: '#000' }}>2KM</Text> 6min</Text>
               </View>
-              <View>
+              <View style={{marginTop:20}}>
                 <Text style={styles.infoTitle}>Customer Address</Text>
+             
                 <Text style={styles.infoSubTitle}>{address?.shipping_address}</Text>
+                
               </View>
             </View>
           </View>
@@ -137,7 +141,7 @@ const MapRouteScreen = ({route,navigation}) => {
 
           <View style={{ paddingHorizontal: 20, gap: 20 }}>
             <TouchableOpacity style={[mStyle.button]} onPress={() => { }}>
-              <Text style={[mStyle.buttonText]}>Accept This Order</Text>
+              <Text style={[mStyle.buttonText,{fontFamily:"Montserrat-Bold",}]}>Accept This Order</Text>
             </TouchableOpacity>
             <TouchableOpacity  onPress={handleNavigateToSecondPage}>
               <Text style={styles.googleMapText}>Visit Google Map</Text>
@@ -172,23 +176,26 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   infoTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '500',
     color: '#23233C',
     marginBottom: 5,
+    fontFamily:"Montserrat-Medium"
   },
   infoSubTitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#838383',
     lineHeight: 20,
+    fontFamily:"Montserrat-Medium"
   },
   googleMapText: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '500',
     textDecorationLine: 'underline',
-    color: '#000',
+    color: '#000000',
     marginTop: 10,
+    fontFamily:"Montserrat-SemiBold"
   },
   button: {
     backgroundColor: '#3498db',

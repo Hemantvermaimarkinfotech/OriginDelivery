@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.js
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect,useCallback} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import ImagePaths from '../utils/ImagePaths';
 import mStyle from '../../AppStyles';
 import colors from '../utils/Colors';
 import axios from 'react-native-axios';
+import { useFocusEffect } from '@react-navigation/native';
+import Feather from 'react-native-vector-icons/Feather';
 
 // import '../assets/fonts/Montserrat/ProtestRiot-Regular.ttf';
 
@@ -52,9 +54,16 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    UndeliveredOrder(); // Fetch the first page when the component mounts
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      console.log("useFocusEffect");
+      UndeliveredOrder(); // Fetch data when the screen is focused
+
+      return () => {
+        // Cleanup if necessary
+      };
+    }, [])
+  );
 
   const [selectedItems, setSelectedItems] = useState([]);
 
@@ -89,6 +98,8 @@ const HomeScreen = ({navigation}) => {
             bottom: 12,
             color: colors.success,
             fontWeight: '500',
+            fontSize:13,
+            fontFamily:"Montserrat-Medium"
           }}>
           {item.status}
         </Text>
@@ -96,7 +107,7 @@ const HomeScreen = ({navigation}) => {
 
       {/* Middle product information */}
       <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.products[0]?.name}</Text>
+        <Text style={styles.productName}>{item?.products[0]?.name}</Text>
 
         <Text style={[styles.productPrice, {color: colors.darkT}]}>
           ${item.products[0]?.price}
@@ -104,19 +115,19 @@ const HomeScreen = ({navigation}) => {
         <Text
           style={[
             mStyle.p1,
-            {color: colors.darkT, marginBottom: 4, fontSize: 13},
+            {color: colors.darkT, fontSize: 16,fontFamily:"Montserrat-Medium"},
           ]}>
           Hougang
         </Text>
-        <Text style={[mStyle.p2, {color: colors.lightT, fontSize: 11}]}>
+        <Text style={[mStyle.p2, {color: colors.lightT, fontSize: 14,fontFamily:"Montserrat-Medium"}]}>
           Order No. {item?.id}
         </Text>
 
         <TouchableOpacity
-          style={[mStyle.button, {width: 75, height: 20, marginVertical: 2}]}
+          style={[mStyle.button, {width: 70, height: 26, marginTop:5,borderRadius:6}]}
           onPress={() => navigation.navigate('MapRoute', {productId: item.id})}>
           <View style={mStyle.row}>
-            <Text style={[mStyle.buttonText, {fontSize: 14}]}>Route</Text>
+            <Text style={[mStyle.buttonText, {fontSize: 15,fontFamily:"Montserrat, Bold"}]}>Route</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -126,10 +137,8 @@ const HomeScreen = ({navigation}) => {
         style={styles.checkbox}
         onPress={() => toggleSelection(item.id)}>
         {selectedItems.includes(item.id) ? (
-          <View style={styles.checkedBox} />
-        ) : (
-          <View style={styles.uncheckedBox} />
-        )}
+          <Feather name="check" size={18} color={colors.primary} />
+        ) : null}
       </TouchableOpacity>
     </View>
   );
@@ -149,7 +158,7 @@ const HomeScreen = ({navigation}) => {
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style={{marginHorizontal: 15, marginVertical: 15}}>
-        <Text style={[mStyle.h5,{color:colors.secondary}]}>Undelivered Orders</Text>
+        <Text style={[mStyle.h5,{color:colors.secondary,fontFamily:"Montserrat-Bold"}]}>Undelivered Orders</Text>
       </View>
 
       <FlatList
@@ -164,7 +173,7 @@ const HomeScreen = ({navigation}) => {
       <View style={{marginHorizontal: 15, marginVertical: 12}}>
         <TouchableOpacity style={[mStyle.button]}>
           <View style={mStyle.row}>
-            <Text style={[mStyle.buttonText]}>Accept order(s)</Text>
+            <Text style={[mStyle.buttonText,{fontFamily:"Montserrat-Bold"}]}>Accept order(s)</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -186,8 +195,8 @@ const styles = StyleSheet.create({
 
     alignItems: 'center',
     justifyContent: 'center',
-    width: 100,
-    height: 120,
+    width: 110,
+    height: 130,
     borderRadius: 6,
   },
   productImage: {
@@ -199,17 +208,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   productName: {
-    // fontWeight: '600',
+    fontWeight: '600',
     fontSize: 17,
     marginBottom: 4,
     color:colors.secondary,
     fontFamily:"Montserrat-SemiBold"
   },
   productPrice: {
-    fontWeight: '600',
-    fontSize: 14,
+    // fontWeight: '600',
+    fontSize: 16,
     marginBottom: 6,
-    color:colors.secondary
+    color:colors.secondary,
+    fontFamily:"Montserrat-Medium"
   },
   checkbox: {
     width: 20,
