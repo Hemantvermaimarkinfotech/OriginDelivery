@@ -23,14 +23,7 @@ const App = () => {
 
 
   return (
-    
-    // <NavigationContainer>
-    //   <MainStack />
-    // </NavigationContainer>
 
-  //   <Provider store={Store}>
-  //   <Routes />
-  // </Provider>
   <View style={styles.container}>
   <Provider />
 </View>

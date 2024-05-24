@@ -23,7 +23,8 @@ const mStyle = StyleSheet.create({
       backgroundColor: colors.primary,
       borderRadius: 8,
       alignItems: 'center',
-      justifyContent:'center'
+      justifyContent:'center',
+  
     },
     buttonText: {
       color: '#FFFFFF',

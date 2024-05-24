@@ -14,7 +14,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-const LoginScreen = ({navigation}) => {
+const ForgotPasswordScreen = ({navigation}) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,58 +50,9 @@ const LoginScreen = ({navigation}) => {
     }
   };
 
-  const handleContinue = () => {
-   
-      navigation.navigate('ForgotPassword'); 
-   
-  };
 
-  const handleLogin = async () => {
-    let valid = true;
 
-    if (!email.trim()) {
-      setEmailError('Please enter your email.');
-      valid = false;
-    } else if (!isEmailValid) {
-      setEmailError('Please enter a valid email.');
-      valid = false;
-    }
-
-    if (!password.trim()) {
-      setPasswordError('Please enter your password.');
-      valid = false;
-    }
-
-    if (!valid) {
-      return;
-    }
-
-    setLoading(true);
-
-    const Data = JSON.stringify({
-      Email: `${email}`,
-      password: `${password}`,
-    });
-
-    try {
-      const response = await axios.post(
-        'https://staging11.originmattress.com.sg/wp-json/custom/v1/login',
-        Data,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      console.log('Login response:', response.data);
-      setUserToken(response?.data);
-      await AsyncStorage.setItem('userData', JSON.stringify(response?.data));
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error?.response);
-    }
-  };
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -111,7 +62,7 @@ const LoginScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       {/* Title and Logo */}
       <View style={styles.topContainer}>
-        <Text style={styles.title}>Log in</Text>
+        <Text style={styles.title}>Reset password</Text>
       </View>
 
       <View style={styles.logoContainer}>
@@ -148,27 +99,7 @@ const LoginScreen = ({navigation}) => {
        
         
         
-     <View style={{height:90}}>
-     <View  style={[mStyle.input, styles.shadow, {backgroundColor: colors.white, borderWidth: 0,flexDirection:"row",justifyContent:"space-between",alignItems:"center",paddingHorizontal:20}]}>
-        <TextInput
-    placeholderTextColor={"#23233C"}
-    placeholder="Password"
-    secureTextEntry={!showPassword}
-    onChangeText={handlePasswordChange}
-    style={{width:"60%",opacity:0.6,fontFamily:"Montserrat-SemiBold",fontSize:12}}
-    color={"#23233C"}
-  /> 
-  <TouchableOpacity onPress={togglePasswordVisibility}>
-    <Feather name={showPassword ? "eye-off" : "eye"} size={22} color={"#23233C"}/>
-  </TouchableOpacity>
-
-
-        </View>
-        {passwordError ? <Text style={{ color: 'red', marginLeft: 20 ,fontSize:13,}} >{passwordError}</Text> : null}
-        <TouchableOpacity style={{alignSelf: 'flex-end',position:"absolute",bottom:0,fontSize:16,color:"#000000",fontFamily:"Montserrat-SemiBold"}} onPress={handleContinue}>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
-        </TouchableOpacity>
-     </View>
+     
 
       
         <View style={{marginVertical: 10}} />
@@ -178,28 +109,12 @@ const LoginScreen = ({navigation}) => {
       {/* Submit Button */}
     {loading?
     <Loader/>:(
-      <TouchableOpacity style={[mStyle.button, styles.shadow]} onPress={handleLogin}>
-      <Text style={mStyle.buttonText}>Login</Text>
+      <TouchableOpacity style={[mStyle.button, styles.shadow]}>
+      <Text style={mStyle.buttonText}>Send Code</Text>
     </TouchableOpacity>
     )}
 
-      <View style={{marginVertical: 10}} />
-      {/* Signup and Social Media Buttons */}
-
-      <View style={styles.socialButtonsContainer}>
-      <TouchableOpacity style={[mStyle.button, {width: 80, backgroundColor: colors.white}]}>
-        <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30,color:"#0F279E"}]}>f</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[mStyle.button, {width: 80, backgroundColor: colors.white}]}>
-        {/* <Text style={[mStyle.buttonText, {color: '#000', fontSize: 30,color:"#4285F4"}]}>G</Text> */}
-        <Image source={require('../assets/images/google.png')}/>
-      </TouchableOpacity>
-      </View>
-      <View style={{marginVertical: 20}} />
-      {/* <TouchableOpacity style={{alignSelf: 'center'}} onPress={handleContinue}>
-          <Text style={{fontSize: 18, fontWeight: '500', textDecorationLine: 'underline'}}>Skip</Text>
-      </TouchableOpacity> */}
-      <View style={{marginVertical: 15}} />
+     
     </SafeAreaView>
   );
 };
@@ -286,5 +201,5 @@ const styles = StyleSheet.create({
 
 });
 
-export default LoginScreen;
+export default ForgotPasswordScreen;
 

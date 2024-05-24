@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.js
-import React, {useState, useEffect,useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StyleSheet,
   ActivityIndicator,
+  Alert
 } from 'react-native';
 
 import MainHeader from '../components/MainHeader';
@@ -21,11 +22,32 @@ import Feather from 'react-native-vector-icons/Feather';
 
 // import '../assets/fonts/Montserrat/ProtestRiot-Regular.ttf';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [ordersData, setOrdersData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null); // Change to single item
 
+  const acceptSelectedOrders = () => {
+    if (selectedItem) {
+      const selectedOrderDetails = ordersData.find(order => order.id === selectedItem);
+  
+      console.log('Selected Order:', selectedOrderDetails);
+      const orderIds = [selectedOrderDetails.id]; // Wrap in an array
+  
+      console.log('Order IDs:', orderIds);
+  
+      navigation.navigate('MapRoute', {
+        selectedOrderIds: orderIds,
+        orderIds, // Pass the order IDs
+        selectedItems: [selectedOrderDetails],
+        status: selectedOrderDetails.status // Pass the status
+      });
+    } else {
+      Alert.alert('No orders selected', 'Please select an order to accept.');
+    }
+  };
+  
   const UndeliveredOrder = async () => {
     try {
       setLoading(true);
@@ -37,7 +59,7 @@ const HomeScreen = ({navigation}) => {
           },
         },
       );
-        console.log("name",response?.data)
+      console.log('name', response?.data);
       if (response?.data?.length === 0) {
         setOrdersData([]);
       } else {
@@ -48,7 +70,7 @@ const HomeScreen = ({navigation}) => {
         Object.keys(response?.data)?.length,
       );
     } catch (error) {
-      console.log("this is catch error of undelivered data: ",error)
+      console.log('this is catch error of undelivered data: ', error);
     } finally {
       setLoading(false);
     }
@@ -56,24 +78,19 @@ const HomeScreen = ({navigation}) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log("useFocusEffect");
+      console.log('useFocusEffect');
       UndeliveredOrder(); // Fetch data when the screen is focused
 
       return () => {
         // Cleanup if necessary
       };
-    }, [])
+    }, []),
   );
 
-  const [selectedItems, setSelectedItems] = useState([]);
-
   const toggleSelection = itemId => {
-    const updatedSelection = selectedItems.includes(itemId)
-      ? selectedItems.filter(item => item !== itemId)
-      : [...selectedItems, itemId];
-
-    setSelectedItems(updatedSelection);
+    setSelectedItem(selectedItem === itemId ? null : itemId);
   };
+
   const MAX_NAME_LENGTH = 20; // Define the maximum length for the product name
 
   // Function to truncate the product name if it exceeds the maximum length
@@ -84,11 +101,11 @@ const HomeScreen = ({navigation}) => {
     return name;
   };
 
-  const renderOrderItem = ({item}) => (
+  const renderOrderItem = ({ item }) => (
     <View style={styles.orderItem}>
       <View style={styles.productContainer}>
         <Image
-          source={{uri: item?.products[0]?.image || 'fallback_image_url'}}
+          source={{ uri: item?.products[0]?.image || 'fallback_image_url' }}
           style={styles.productImage}
         />
 
@@ -98,8 +115,8 @@ const HomeScreen = ({navigation}) => {
             bottom: 12,
             color: colors.success,
             fontWeight: '500',
-            fontSize:13,
-            fontFamily:"Montserrat-Medium"
+            fontSize: 13,
+            fontFamily: 'Montserrat-Medium',
           }}>
           {item.status}
         </Text>
@@ -109,25 +126,49 @@ const HomeScreen = ({navigation}) => {
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item?.products[0]?.name}</Text>
 
-        <Text style={[styles.productPrice, {color: colors.darkT}]}>
+        <Text style={[styles.productPrice, { color: colors.darkT }]}>
           ${item.products[0]?.price}
         </Text>
         <Text
           style={[
             mStyle.p1,
-            {color: colors.darkT, fontSize: 16,fontFamily:"Montserrat-Medium"},
+            {
+              color: colors.darkT,
+              fontSize: 16,
+              fontFamily: 'Montserrat-Medium',
+            },
           ]}>
           Hougang
         </Text>
-        <Text style={[mStyle.p2, {color: colors.lightT, fontSize: 14,fontFamily:"Montserrat-Medium"}]}>
+        <Text
+          style={[
+            mStyle.p2,
+            {
+              color: colors.lightT,
+              fontSize: 14,
+              fontFamily: 'Montserrat-Medium',
+            },
+          ]}>
           Order No. {item?.id}
         </Text>
 
         <TouchableOpacity
-          style={[mStyle.button, {width: 70, height: 26, marginTop:5,borderRadius:6}]}
-          onPress={() => navigation.navigate('MapRoute', {productId: item.id})}>
+          style={[
+            mStyle.button,
+            { width: 70, height: 26, marginTop: 5, borderRadius: 6 },
+          ]}
+          onPress={() => navigation.navigate('MapRoute', { 
+            orderIds: [item.id],
+            status: item.status // Pass the status
+          })} >
           <View style={mStyle.row}>
-            <Text style={[mStyle.buttonText, {fontSize: 15,fontFamily:"Montserrat, Bold"}]}>Route</Text>
+            <Text
+              style={[
+                mStyle.buttonText,
+                { fontSize: 15, fontFamily: 'Montserrat, Bold' },
+              ]}>
+              Route
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -136,29 +177,33 @@ const HomeScreen = ({navigation}) => {
       <TouchableOpacity
         style={styles.checkbox}
         onPress={() => toggleSelection(item.id)}>
-        {selectedItems.includes(item.id) ? (
+        {selectedItem === item.id ? (
           <Feather name="check" size={18} color={colors.primary} />
         ) : null}
       </TouchableOpacity>
     </View>
   );
 
- const renderFooter = () => {
-  if (loading) {
-    return (
-      <View style={styles.footer}>
-        <ActivityIndicator animating size="large" color={colors.primary} />
-      </View>
-    );
-  } 
-};
-
-  
+  const renderFooter = () => {
+    if (loading) {
+      return (
+        <View style={styles.footer}>
+          <ActivityIndicator animating size="large" color={colors.primary} />
+        </View>
+      );
+    }
+  };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
-      <View style={{marginHorizontal: 15, marginVertical: 15}}>
-        <Text style={[mStyle.h5,{color:colors.secondary,fontFamily:"Montserrat-Bold"}]}>Undelivered Orders</Text>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+        <Text
+          style={[
+            mStyle.h5,
+            { color: colors.secondary, fontFamily: 'Montserrat-Bold' },
+          ]}>
+          Undelivered Orders
+        </Text>
       </View>
 
       <FlatList
@@ -170,10 +215,14 @@ const HomeScreen = ({navigation}) => {
         onEndReachedThreshold={0.1} // Trigger fetchNextPage when 90% scrolled to the end
       />
 
-      <View style={{marginHorizontal: 15, marginVertical: 12}}>
-        <TouchableOpacity style={[mStyle.button]}>
+      <View style={{ marginHorizontal: 15, marginVertical: 12 }}>
+        <TouchableOpacity
+          style={[mStyle.button]}
+          onPress={acceptSelectedOrders}>
           <View style={mStyle.row}>
-            <Text style={[mStyle.buttonText,{fontFamily:"Montserrat-Bold"}]}>Accept order(s)</Text>
+            <Text style={[mStyle.buttonText, { fontFamily: 'Montserrat-Bold' }]}>
+              Accept order(s)
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -211,15 +260,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 17,
     marginBottom: 4,
-    color:colors.secondary,
-    fontFamily:"Montserrat-SemiBold"
+    color: colors.secondary,
+    fontFamily: 'Montserrat-SemiBold',
   },
   productPrice: {
     // fontWeight: '600',
     fontSize: 16,
     marginBottom: 6,
-    color:colors.secondary,
-    fontFamily:"Montserrat-Medium"
+    color: colors.secondary,
+    fontFamily: 'Montserrat-Medium',
   },
   checkbox: {
     width: 20,
