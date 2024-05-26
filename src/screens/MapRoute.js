@@ -22,6 +22,8 @@ const MapRouteScreen = ({route, navigation}) => {
   
   const { orderIds, status } = route.params;
 
+ 
+
   console.log('Order IDs:', orderIds);
   console.log('Status:', status);
 
@@ -37,7 +39,7 @@ const MapRouteScreen = ({route, navigation}) => {
   const [showmarkedline,setShowMarkedLine]=useState(true)
   const {userToken, updateUserToken} = useContext(AuthContext);
   const [orderAccepted, setOrderAccepted] = useState(false);
-  const [orderStatus, setOrderStatus] = useState('Accepted'); // Initial order status is 'Accepted'
+  const [orderStatus, setOrderStatus] = useState(status); // Initial order status is 'Accepted'
 
 
   const handleNavigateToSecondPage = (latitude, longitude) => {

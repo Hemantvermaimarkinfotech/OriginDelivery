@@ -31,11 +31,8 @@ const GetStartedScreen = ({ navigation }) => {
 
   const handleContinue = () => {
     if (activeIndex < slides.length - 1) {
-      // Continue to the next slide
       setActiveIndex(activeIndex + 1);
     } else {
-      // Navigate to the next screen (e.g., the login screen)
-      // navigation.replace('Main'); // Replace 'Login' with the actual name of your login screen
       navigation.navigate('Login'); 
     }
   };
@@ -93,21 +90,25 @@ const styles = StyleSheet.create({
   slide: {
     position: 'relative',
     top: '80%',
-    // borderColor: 'red',
-    // borderWidth: 1,
+    borderColor: 'red',
   },
   slideContent: {
     alignItems: 'center',
-    // paddingVertical: 20,
-    paddingHorizontal: 40,
+    paddingVertical: 20,
+    
+    borderWidth:1,
+   
   },
   title: {
     fontSize: 30,
     letterSpacing: 0.6,
-    fontWeight: '800',
-    // marginBottom: 12,
     textAlign: 'center',
     color:colors.secondary,
+    fontFamily:"Montserrat-Bold",
+    // width:400,
+    // marginBottom:20
+    position:"absolute",
+    top:0
    
   },
   description: {

@@ -78,7 +78,7 @@ const HomeScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('useFocusEffect');
+     alert('useFocusEffect');
       UndeliveredOrder(); // Fetch data when the screen is focused
 
       return () => {
